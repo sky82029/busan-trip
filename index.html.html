@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#CFEFF6">
+<title>釜山楓遊 · 六日賞楓行程 APP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chiron+GoRound+TC:wght@500;700;800&family=Jua&display=swap">
+<style>
+:root{
+  --ink:#3A2748; --ink-soft:#6B5A7A; --sky:#CFEFF6; --sky-2:#E9F8FB; --sea:#27B3C4;
+  --maple:#E9442F; --orange:#FF8A2B; --sun:#FFD43B; --leaf:#5DBB63; --pink:#FF8FA3; --paper:#FFFFFF;
+  --line:#3A2748; --shadow:0 4px 0 var(--ink);
+  --kr:"Jua","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --tc:"Chiron GoRound TC","Huninn","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{margin:0;font-family:var(--tc);font-weight:500;color:var(--ink);background:var(--sky);line-height:1.6;font-size:15px;
+  padding-top:env(safe-area-inset-top,0px)}
+body:before{content:"";position:fixed;inset:0;z-index:-1;opacity:.5;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><path d='M30 14l4 9 6-4-1 14 11-5-4 11 10 4-12 8 3 8-10-2-3 10-3-10-10 2 3-8-12-8 10-4-4-11 11 5-1-14 6 4z' fill='%23ffffff' opacity='.55'/></svg>");
+  background-size:120px 120px}
+.kr{font-family:var(--kr);font-weight:400}
+a{color:var(--maple)}
+svg.ic{width:1.2em;height:1.2em;vertical-align:-.2em}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px;box-shadow:0 0 0 5px var(--ink)}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:40;background:var(--sky);border-bottom:3px solid var(--ink);padding:8px 14px;
+  padding-top:calc(8px + env(safe-area-inset-top,0px));margin-top:calc(-1 * env(safe-area-inset-top,0px))}
+.top-in{max-width:560px;margin:0 auto;display:flex;align-items:center;gap:10px}
+.logo{width:40px;height:40px;flex:none;color:var(--orange)}
+.brand{flex:1;min-width:0}
+.brand b{display:block;font-size:19px;font-weight:800;line-height:1.1}
+.brand span{font-size:12px;color:var(--ink-soft)}
+.sosbtn{flex:none;min-height:44px;padding:0 14px;border:3px solid var(--ink);border-radius:999px;background:var(--maple);color:#fff;font:800 15px var(--tc);box-shadow:var(--shadow);cursor:pointer}
+.sosbtn:active,.btn:active,.chip:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+
+.app{max-width:560px;margin:0 auto;padding:14px 14px calc(110px + env(safe-area-inset-bottom,0px))}
+.tab{display:none}.tab.on{display:block}
+h2.h{margin:4px 0 10px;font-size:22px;font-weight:800}
+h3{margin:0 0 6px;font-size:17px;font-weight:800}
+.lead{margin:0 0 12px;color:var(--ink-soft);font-size:14px}
+.fine{font-size:13px;color:var(--ink-soft)}
+
+/* generic card */
+.card,.pcard,.brief,.checks,.backup,.conv,.intel,.ph,.tbl{background:var(--paper);border:3px solid var(--ink);border-radius:18px;box-shadow:var(--shadow)}
+.pcard{padding:14px 16px;margin:0 0 14px}
+.pcard ul,.brief ul,.checks ul{margin:6px 0 0;padding-left:1.1em;font-size:14px}
+.pcard li,.brief li,.checks li{margin:.3em 0}
+.pcard .big,.big{font-size:19px;font-weight:800;margin:0 0 4px}
+.pcard.accent{background:#FFF6D6}
+.ko{color:var(--maple)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 14px;border:3px solid var(--ink);border-radius:999px;
+  background:#fff;color:var(--ink);font:700 14px var(--tc);text-decoration:none;box-shadow:var(--shadow);cursor:pointer}
+.btn-main{background:var(--orange);color:#fff;text-shadow:0 1px 0 rgba(58,39,72,.5)}
+.btn-book{background:var(--sun)}
+.btn.done{background:var(--leaf);color:#fff}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 2px}
+
+/* hero (today) */
+.hero{position:relative;overflow:hidden;background:var(--maple);color:#fff;border:3px solid var(--ink);border-radius:26px;box-shadow:var(--shadow);padding:18px 18px 16px;min-height:178px}
+.hero h1{margin:0 0 4px;font-size:27px;font-weight:800;line-height:1.2;max-width:15em}
+.hero p{margin:0;font-size:14px;max-width:16em}
+.hero .mas{position:absolute;right:-6px;bottom:-10px;width:150px;height:150px;transform:rotate(8deg)}
+.cd{display:inline-flex;align-items:baseline;gap:6px;background:var(--sun);color:var(--ink);border:3px solid var(--ink);border-radius:16px;padding:2px 14px;margin:6px 0;font-weight:800}
+.cd b{font-size:44px;line-height:1.1}
+.fall{position:absolute;top:-30px;width:26px;height:26px;opacity:0;animation:fall 6s ease-in 1}
+.fall svg{width:100%;height:100%}
+@keyframes fall{0%{opacity:0;transform:translate(0,0) rotate(0)}10%{opacity:1}100%{opacity:0;transform:translate(var(--dx),230px) rotate(var(--rot))}}
+
+/* progress */
+.prog{height:16px;border:3px solid var(--ink);border-radius:999px;background:#fff;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--leaf);transition:width .3s}
+.sect{margin:18px 0 8px;font-size:18px;font-weight:800;display:flex;align-items:center;gap:8px}
+.sect svg{width:22px;height:22px;color:var(--orange)}
+
+/* today now/next */
+.now{border-color:var(--ink);background:#FFF1B8}
+.tag{display:inline-block;padding:1px 10px;border:2.5px solid var(--ink);border-radius:999px;font-size:12px;font-weight:800;background:var(--sun);margin-right:6px}
+.tag.maple{background:var(--maple);color:#fff}.tag.pine{background:var(--leaf);color:#fff}.tag.warn{background:var(--orange);color:#fff}
+
+/* day chips */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 12px;margin:0 -14px;padding-left:14px;padding-right:14px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;min-width:62px;min-height:56px;padding:4px 10px;border:3px solid var(--ink);border-radius:16px;background:#fff;box-shadow:var(--shadow);text-align:center;font:800 15px var(--tc);color:var(--ink);cursor:pointer;line-height:1.2}
+.chip small{display:block;font-weight:600;font-size:12px;color:var(--ink-soft)}
+.chip.on{background:var(--maple);color:#fff}.chip.on small{color:#FFE4DE}
+.chip.sm{min-height:40px;min-width:0;border-radius:999px;padding:0 14px}
+.seg{display:flex;gap:8px;overflow-x:auto;margin:0 -14px 14px;padding:2px 14px 8px;scrollbar-width:none}.seg::-webkit-scrollbar{display:none}
+
+.dayhead{background:var(--sun);border:3px solid var(--ink);border-radius:20px;box-shadow:var(--shadow);padding:12px 16px;margin-bottom:12px}
+.dayhead h2{margin:2px 0 6px;font-size:21px;font-weight:800;line-height:1.3}
+.dayhead .wear{font-size:13.5px}
+.brief{padding:10px 16px;margin:0 0 12px;background:#E3F7E5}
+.checks{padding:10px 16px;margin:14px 0 0;background:#FFE7D1}
+.backup{padding:10px 16px;margin:14px 0 0;background:#E4F1FF;font-size:14px}
+.brief b,.checks b,.backup b{font-weight:800}
+
+/* timeline */
+.tl{list-style:none;margin:0;padding:0 0 0 38px;position:relative}
+.tl:before{content:"";position:absolute;left:15px;top:10px;bottom:10px;border-left:4px dotted rgba(58,39,72,.4)}
+.st{position:relative;margin:0 0 12px}
+.node{position:absolute;left:-38px;top:12px;width:32px;height:32px;display:grid;place-items:center;color:var(--orange)}
+.node svg{width:32px;height:32px}
+.st.done .node{color:var(--leaf)}
+.st.nowst .node{animation:bob 1.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-4px) rotate(8deg)}}
+.stop{background:#fff;border:3px solid var(--ink);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+.stop summary{list-style:none;cursor:pointer;display:block;padding:10px 12px 10px 14px;position:relative}
+.stop summary::-webkit-details-marker{display:none}
+.stop[open] summary{border-bottom:3px dotted rgba(58,39,72,.35)}
+.st.nowst .stop{background:#FFF1B8}
+.st.done .stop{opacity:.72}
+.tm{display:inline-block;font-weight:800;font-size:13px;background:var(--sea);color:#fff;border:2.5px solid var(--ink);border-radius:999px;padding:0 10px}
+.nm{display:block;margin-top:4px;font-size:17px;font-weight:800;line-height:1.35;padding-right:36px}
+.star{color:var(--maple)}
+.badge{display:inline-block;margin-left:6px;padding:0 8px;border:2px solid var(--ink);border-radius:999px;background:var(--sun);font-size:11.5px;font-weight:800;vertical-align:.1em}
+.one{display:block;margin-top:2px;font-size:13px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:36px}
+.chev{position:absolute;right:12px;top:14px;width:26px;height:26px;transition:transform .2s}
+.stop[open] .chev{transform:rotate(180deg)}
+.body{padding:10px 14px 14px}
+.addr{background:var(--sky-2);border:2.5px solid var(--ink);border-radius:14px;padding:8px 12px}
+.addr-ko{font-family:var(--kr);font-size:19px;line-height:1.35;word-break:keep-all}
+.addr-en{font-size:12.5px;color:var(--ink-soft)}
+.intro{margin:10px 0 0}
+.hrs,.pay{margin:8px 0 0;border:2.5px solid var(--ink);border-radius:14px;padding:6px 12px;font-size:13.5px}
+.hrs{background:#fff}.pay{background:#E3F7E5}
+.hrs b,.pay b{font-weight:800}
+.tip{margin:8px 0 0;border:2.5px dashed var(--ink);border-radius:14px;padding:6px 12px;font-size:13.5px;background:#fff}
+.tip.warn{background:#FFE7D1}
+.donebtn{position:absolute;right:10px;bottom:8px;width:34px;height:34px;border:3px solid var(--ink);border-radius:50%;background:#fff;color:var(--ink);display:grid;place-items:center;cursor:pointer;font-size:0}
+.donebtn svg{width:18px;height:18px;opacity:.25}
+.st.done .donebtn{background:var(--leaf)}.st.done .donebtn svg{opacity:1;color:#fff}
+.infostop{background:rgba(255,255,255,.7);border:3px dashed var(--ink);border-radius:16px;padding:6px 12px;font-size:13.5px}
+.infostop b.tm2{font-weight:800;color:var(--sea)}
+
+/* search */
+.search{display:flex;gap:8px;margin:0 0 10px}
+.search input,.conv input{flex:1;min-width:0;font:600 15px var(--tc);color:var(--ink);padding:10px 14px;border:3px solid var(--ink);border-radius:999px;background:#fff}
+.conv input{flex:none;width:9em;max-width:100%;border-radius:12px;padding:6px 10px}
+.res{list-style:none;margin:0;padding:0}
+.res li{margin:0 0 8px}
+.res button{width:100%;text-align:left;border:3px solid var(--ink);border-radius:14px;background:#fff;padding:8px 12px;font:600 14px var(--tc);color:var(--ink);box-shadow:var(--shadow);cursor:pointer}
+.res small{color:var(--ink-soft);display:block}
+
+/* booking */
+.bk{background:#fff;border:3px solid var(--ink);border-radius:18px;box-shadow:var(--shadow);padding:12px 14px;margin:0 0 12px}
+.bk-top{display:flex;gap:8px;justify-content:space-between;align-items:flex-start}
+.bk-name{font-weight:800;font-size:16px}
+.bk-st{flex:none;padding:0 10px;border:2.5px solid var(--ink);border-radius:999px;font-size:12px;font-weight:800;background:var(--sun)}
+.st-done{background:var(--leaf);color:#fff}.st-need{background:var(--maple);color:#fff}.st-wait{background:var(--orange);color:#fff}.st-walk{background:#fff}
+.bk-day{font-size:12.5px;color:var(--ink-soft);margin:2px 0 6px}
+.bk-note{margin:4px 0 0;font-size:14px}
+
+/* acc */
+.acc{background:#fff;border:3px solid var(--ink);border-radius:18px;box-shadow:var(--shadow);margin:0 0 12px;overflow:hidden}
+.acc summary{list-style:none;cursor:pointer;padding:12px 16px;font-weight:800;font-size:16px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.acc summary::-webkit-details-marker{display:none}
+.acc summary svg{width:22px;height:22px;transition:transform .2s;flex:none}
+.acc[open] summary svg{transform:rotate(180deg)}
+.acc[open] summary{border-bottom:3px dotted rgba(58,39,72,.35)}
+.acc .in{padding:10px 16px 14px}
+.acc .in ul{margin:6px 0 0;padding-left:1.1em;font-size:14px}.acc .in li{margin:.3em 0}
+.flt{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:2px 0}
+.flt .t{font-size:24px;font-weight:800}.flt .arrow{color:var(--orange);font-size:20px}.flt .c{font-size:13px;color:var(--ink-soft)}
+.wear .row{display:flex;gap:10px;padding:8px 14px;border-bottom:2px dotted rgba(58,39,72,.3)}
+.wear .row:last-child{border:0}
+.wear .k{flex:none;width:4.2em;font-weight:800;color:var(--maple)}
+.wear{background:#fff;border:3px solid var(--ink);border-radius:18px;box-shadow:var(--shadow);font-size:14px}
+.intel{padding:12px 16px;background:#FFF1B8;font-size:14px}.intel h3{font-size:17px}.hl{background:var(--sun);padding:0 4px;border-radius:6px}
+
+/* check */
+.chk{list-style:none;margin:0;padding:0}
+.chk li{margin:0 0 8px}
+.chk label{display:flex;gap:10px;align-items:flex-start;background:#fff;border:3px solid var(--ink);border-radius:14px;padding:8px 12px;cursor:pointer;font-size:14px}
+.chk input{width:22px;height:22px;flex:none;accent-color:var(--leaf);margin-top:2px}
+.chk input:checked+span{text-decoration:line-through;opacity:.6}
+
+/* tools */
+.tbl{overflow-x:auto;margin:0 0 10px}
+.tbl table{border-collapse:collapse;width:100%;font-size:14px}
+.tbl th,.tbl td{border-bottom:2px dotted rgba(58,39,72,.35);padding:8px 10px;text-align:left;vertical-align:top}
+.tbl th{background:var(--sun)}.tbl td.num,.tbl th.num{text-align:right;white-space:nowrap}
+.conv{padding:12px 14px;margin-top:12px}
+.cv-row{margin-top:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}.cv-row b{color:var(--maple)}
+.ph{padding:10px 14px;margin:10px 0}
+.ph.sm .ph-ko{font-family:var(--kr);font-size:clamp(20px,5.4vw,26px);color:var(--maple);line-height:1.35}
+.ph-ko{font-family:var(--kr);font-size:clamp(24px,6.5vw,32px);color:var(--maple);line-height:1.35}
+.ph-zh{font-size:13.5px;font-weight:700}.ph-ro{font-size:12.5px;color:var(--ink-soft)}
+.phg{margin:18px 0 4px;font-size:17px;font-weight:800}
+.sos-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}.sos-row b{font-size:22px;color:var(--maple)}
+
+/* tabbar */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:45;background:var(--sun);border-top:3px solid var(--ink);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
+.tabbar-in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.tb{border:0;background:transparent;color:var(--ink);font:800 12px var(--tc);padding:4px 0 2px;border-radius:14px;display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer;min-height:52px}
+.tb svg{width:26px;height:26px}
+.tb[aria-current="page"]{background:#fff;box-shadow:inset 0 0 0 3px var(--ink)}
+.tb[aria-current="page"] svg{color:var(--maple)}
+
+/* fab */
+.fab{position:fixed;right:12px;bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:44}
+
+/* sheets */
+.sheet{position:fixed;inset:0;z-index:60;background:rgba(58,39,72,.55);display:none;align-items:flex-end;justify-content:center}
+.sheet.open{display:flex}
+.sheet-in{width:100%;max-width:560px;max-height:88vh;overflow:auto;background:var(--sky);border:3px solid var(--ink);border-radius:26px 26px 0 0;padding:14px 14px calc(18px + env(safe-area-inset-bottom,0px))}
+.sheet-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.sheet-h h2{margin:0;font-size:21px;font-weight:800}
+.driver{position:fixed;inset:0;z-index:70;background:var(--sun);display:none;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:24px}
+.driver.open{display:flex}
+.driver .say{font-family:var(--kr);font-size:clamp(24px,7vw,34px);margin:0 0 14px}
+.driver .nm2{font-family:var(--kr);font-size:clamp(30px,9vw,46px);line-height:1.25;margin:0 0 10px;color:var(--maple)}
+.driver .ad{font-family:var(--kr);font-size:clamp(26px,8vw,40px);line-height:1.3;margin:0 0 10px}
+.driver .en{font-size:15px;margin:0 0 6px}.driver .zh{font-size:16px;font-weight:800;margin:0 0 18px}
+.driver .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.ldlg{position:fixed;inset:0;z-index:80;background:rgba(58,39,72,.6);display:none;align-items:center;justify-content:center;padding:18px}
+.ldlg.open{display:flex}
+.ld-card{background:#fff;border:3px solid var(--ink);border-radius:20px;padding:16px;max-width:420px;width:100%}
+.ld-url{word-break:break-all;font-size:12px;background:var(--sky-2);border:2px solid var(--ink);border-radius:10px;padding:6px 8px;margin:6px 0 10px}
+.ld-card .row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.ld-note{font-size:12.5px;color:var(--ink-soft)}
+.ld-a{display:block;margin:8px 0;font-size:14px}
+.toast{position:fixed;left:50%;bottom:calc(150px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);z-index:90;background:var(--ink);color:#fff;padding:8px 16px;border-radius:999px;font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:.25s;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.empty{text-align:center;padding:24px 10px}
+.empty svg{width:120px;height:120px}
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<symbol id="leaf" viewBox="0 0 100 100"><path d="M50 4 L57 20 L66 14 L66 34 L84 26 L78 46 L96 52 L74 66 L80 78 L58 74 L54 90 L46 90 L42 74 L20 78 L26 66 L4 52 L22 46 L16 26 L34 34 L34 14 L43 20 Z" style="fill:currentColor;stroke:#3A2748;stroke-width:5;stroke-linejoin:round"/><path d="M50 90 L50 99" style="stroke:#3A2748;stroke-width:5;stroke-linecap:round"/><path d="M50 84 L50 20 M50 60 L26 48 M50 60 L74 48 M50 44 L36 30 M50 44 L64 30" style="fill:none;stroke:#3A2748;stroke-width:2.5;stroke-linecap:round;opacity:.35"/></symbol>
+<symbol id="i-plan" viewBox="0 0 24 24"><path d="M12 21s-6.5-5.4-6.5-10.5a6.5 6.5 0 1 1 13 0C18.5 15.6 12 21 12 21z" fill="none" stroke="currentColor" style="stroke:#3A2748" stroke-width="2.4" stroke-linejoin="round"/><circle cx="12" cy="10.5" r="2.4" style="fill:#3A2748"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M3.5 8a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4V8z" fill="none" style="stroke:#3A2748" stroke-width="2.4" stroke-linejoin="round"/><path d="M14 7v10" style="stroke:#3A2748;stroke-width:2.2;stroke-dasharray:2 2.2;fill:none"/></symbol>
+<symbol id="i-tools" viewBox="0 0 24 24"><rect x="3.5" y="8" width="17" height="11.5" rx="2.5" fill="none" style="stroke:#3A2748" stroke-width="2.4"/><path d="M9 8V6.2a1.2 1.2 0 0 1 1.2-1.2h3.6A1.2 1.2 0 0 1 15 6.2V8M3.5 13.5h17" fill="none" style="stroke:#3A2748" stroke-width="2.4" stroke-linecap="round"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.8" fill="none" style="stroke:#3A2748" stroke-width="2.4"/><path d="M12 11v5.2" style="stroke:#3A2748;stroke-width:2.6;stroke-linecap:round"/><circle cx="12" cy="7.9" r="1.5" style="fill:#3A2748"/></symbol>
+</defs></svg>
+<header class="top" id="top"><div class="top-in">
+  <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#leaf" xlink:href="#leaf"/></svg>
+  <div class="brand"><b>釜山楓遊</b><span>10/29–11/03　3 人　計程車之旅</span></div>
+  <button class="sosbtn" data-act="sos" aria-label="緊急資訊">SOS</button>
+</div></header>
+<main class="app">
+  <section class="tab" id="t-today"></section>
+  <section class="tab" id="t-plan"></section>
+  <section class="tab" id="t-book"></section>
+  <section class="tab" id="t-tools">
+    <h2 class="h">工具箱</h2>
+    <div class="seg"><button class="chip sm" data-act="tool" data-tool="budget">預算換算</button><button class="chip sm" data-act="tool" data-tool="tax">退稅</button><button class="chip sm" data-act="tool" data-tool="pay">付款</button><button class="chip sm" data-act="tool" data-tool="phrase">常用韓文</button></div>
+    <div class="tp" id="tp-budget"><p class="lead">只列我查到價格的項目。各網站價格有出入，所以給區間，3 人合計。</p>
+    <div class="tbl"><table id="bt"></table></div>
+    <p class="lead" style="margin-top:10px">未計入：市內計程車（叫車前看 Kakao T 的預估價）、所有餐費、彩繪蛋糕、伴手禮、棉被與眼鏡。</p>
+    <div class="conv">
+      <div>匯率請自己填（以出發前的銀行或 App 為準）：1 韓元 ＝ <input id="rate" inputmode="decimal" placeholder="例如 0.022"> 台幣</div>
+      <div class="cv-row"><input id="krw" inputmode="numeric" placeholder="輸入韓元"> ₩ ≈ <b id="twd">—</b> 台幣</div>
+      <div class="cv-row"><input id="twdin" inputmode="numeric" placeholder="輸入台幣"> 台幣 ≈ <b id="krwout">—</b> ₩</div>
+    </div></div>
+    <div class="tp" id="tp-tax" hidden><p class="lead">整理自旅遊網站與店家頁面，不是官方公告，現場以店員與機場櫃台說明為準。</p><div class="pcard">
+      <ul>
+        <li>先看店門口有沒有 Tax Free 或即時退稅標誌，<b>結帳前拿出護照</b>。</li>
+        <li><b>即時退稅</b>：在收銀台直接扣稅。單筆上限 ₩1,000,000、整趟累計 ₩5,000,000（多個來源一致）。單筆最低消費各來源寫法不同（₩5,000、₩15,000、₩30,000 都有人寫），以店家為準，結帳前問「<span class="ko kr">즉시 환급 되나요?</span>」。</li>
+        <li><b>一般退稅</b>：先付全額、保留退稅單，出境前在機場辦。金海機場的櫃台在 2 樓，約 4 號門附近（第三方資料，到場看指標）。稅額超過 ₩75,000 要先給海關人員驗貨，以下可用自助機（兩個旅遊網站的說法）。</li>
+        <li><b>要退稅的商品先別託運</b>，隨身帶去驗貨。即時退稅買的東西也要帶出境，有來源說海關可能抽查。</li>
+        <li>回程 10:50 起飛，08:45–08:50 到機場，退稅預留 15–30 分（第三方估計）。</li>
+        <li>樂天 outlet 有標示 Tax Refund 的店可以退（我查到的是 LEE 的店頁面，其他店以結帳處為準）。國際市場與富平罐頭市場的小攤能不能退我沒查到，別預期。</li>
+        <li>買了棉被要先確認 Air Busan 託運額度，超重另付費。</li>
+      </ul>
+    </div></div>
+    <div class="tp" id="tp-pay" hidden><div class="pcard accent"><h3>付款怎麼選比較划算</h3><ul>
+          <li><b>全支付</b>：用帳戶餘額或連結銀行帳戶付款，免 1.5% 海外手續費，只限有 ZeroPay / HIVEX 標誌的店。回饋活動常變，以 App 公告為準。出發前先切到韓國，並儲值夠用</li>
+          <li><b>信用卡</b>：大型店、餐廳、景點票口都最穩。多數卡收 1.5% 海外手續費，除非你的卡免收或海外回饋更高，請自行比較</li>
+          <li><b>超商</b>：全支付在四大超商（CU、GS25、7-Eleven、emart24）都有來源列出，沒有 1.5% 手續費，優先用它</li>
+          <li><b>LINE Pay</b>：只限指定店家，是綁信用卡付款，手續費看發卡銀行，通常要靠回饋活動才划算。超商方面 CU 最多來源確認可用，7-Eleven 多數來源有列，emart24 只有較新的來源有列，GS25 我沒查到。樂天體系（含 Outlet）可試。付款前到 LINE Pay「遊韓專區」確認，並開啟定位服務，條碼才會自動切到韓國</li>
+          <li>刷卡機問你要韓元還是台幣時，<b>選韓元（KRW）</b>，選台幣匯率通常較差</li>
+          <li><b>現金</b>：市場攤販與小額備用，不用多換</li>
+          <li><b>計程車</b>：Kakao T / Uber 綁信用卡，或上車依跳表付款。我沒查到計程車支援全支付</li>
+          <li>每個地點下方的「付款」建議是依店家類型判斷，<b>我沒有逐店確認有沒有 ZeroPay</b>，到店以標誌為準</li>
+        </ul></div></div>
+    <div class="tp" id="tp-phrase" hidden><p class="lead">按下去手機會用韓文念出來，也可以直接把螢幕給店員看。</p><div class="search"><input id="phq" type="search" placeholder="搜尋常用句" aria-label="搜尋常用韓文"></div>
+    <div class="ph">
+      <div class="ph-zh">可以給我收據嗎？</div>
+      <div class="ph-ko kr" id="ph-ko">영수증 주실 수 있나요?</div>
+      <div class="ph-ro">yeong-su-jeung ju-sil su in-na-yo?</div>
+      <div class="actions">
+        <button class="btn btn-main" data-act="speak" data-t="영수증 주실 수 있나요?" data-r="0.9">播放</button>
+        <button class="btn" data-act="speak" data-t="영수증 주실 수 있나요?" data-r="0.6">慢速播放</button>
+      </div>
+    </div>
+    <h3 class="phg">計程車</h3>
+    <div class="ph sm"><div class="ph-zh">請到這裡（出示地址時）</div><div class="ph-ko kr">여기로 가 주세요</div><div class="ph-ro">yeo-gi-ro ga ju-se-yo</div>
+      <div class="actions"><button class="btn btn-main" data-act="speak" data-t="여기로 가 주세요" data-r="0.9">播放</button><button class="btn" data-act="speak" data-t="여기로 가 주세요" data-r="0.6">慢速</button></div></div>
+    <div class="ph sm"><div class="ph-zh">請在這裡停車</div><div class="ph-ko kr">여기서 세워 주세요</div><div class="ph-ro">yeo-gi-seo se-wo ju-se-yo</div>
+      <div class="actions"><button class="btn btn-main" data-act="speak" data-t="여기서 세워 주세요" data-r="0.9">播放</button><button class="btn" data-act="speak" data-t="여기서 세워 주세요" data-r="0.6">慢速</button></div></div>
+    <div class="ph sm"><div class="ph-zh">請走高速公路</div><div class="ph-ko kr">고속도로로 가 주세요</div><div class="ph-ro">go-sok-do-ro-ro ga ju-se-yo</div>
+      <div class="actions"><button class="btn btn-main" data-act="speak" data-t="고속도로로 가 주세요" data-r="0.9">播放</button><button class="btn" data-act="speak" data-t="고속도로로 가 주세요" data-r="0.6">慢速</button></div></div>
+    <div class="ph sm"><div class="ph-zh">請打開後車廂</div><div class="ph-ko kr">트렁크 열어 주세요</div><div class="ph-ro">teu-reong-keu yeo-reo ju-se-yo</div>
+      <div class="actions"><button class="btn btn-main" data-act="speak" data-t="트렁크 열어 주세요" data-r="0.9">播放</button><button class="btn" data-act="speak" data-t="트렁크 열어 주세요" data-r="0.6">慢速</button></div></div>
+    <div class="ph sm"><div class="ph-zh">我用卡付款</div><div class="ph-ko kr">카드로 계산할게요</div><div class="ph-ro">ka-deu-ro gye-san-hal-ge-yo</div>
+      <div class="actions"><button class="btn btn-main" data-act="speak" data-t="카드로 계산할게요" data-r="0.9">播放</button><button class="btn" data-act="speak" data-t="카드로 계산할게요" data-r="0.6">慢速</button></div></div>
+    <h3 class="phg">餐廳與候位</h3>
+    <div class="ph sm"><div class="ph-zh">我們三位</div><div class="ph-ko kr">세 명이에요</div><div class="ph-ro">se myeong-i-e-yo</div>
+      <div class="actions"><button class="btn btn-main" data-act="speak" data-t="세 명이에요" data-r="0.9">播放</button><button class="btn" data-act="speak" data-t="세 명이에요" data-r="0.6">慢速</button></div></div>
+    <div class="ph sm"><div class="ph-zh">我有預約</div><div class="ph-ko kr">예약했어요</div><div class="ph-ro">ye-yak-haess-eo-yo</div>
+      <div class="actions"><button class="btn btn-main" data-act="speak" data-t="예약했어요" data-r="0.9">播放</button><button class="btn" data-act="speak" data-t="예약했어요" data-r="0.6">慢速</button></div></div>
+    <div class="ph sm"><div class="ph-zh">請給我這個</div><div class="ph-ko kr">이거 주세요</div><div class="ph-ro">i-geo ju-se-yo</div>
+      <div class="actions"><button class="btn btn-main" data-act="speak" data-t="이거 주세요" data-r="0.9">播放</button><button class="btn" data-act="speak" data-t="이거 주세요" data-r="0.6">慢速</button></div></div>
+    <div class="ph sm"><div class="ph-zh">請不要太辣</div><div class="ph-ko kr">너무 맵지 않게 해 주세요</div><div class="ph-ro">neo-mu maep-ji an-ke hae ju-se-yo</div>
+      <div class="actions"><button class="btn btn-main" data-act="speak" data-t="너무 맵지 않게 해 주세요" data-r="0.9">播放</button><button class="btn" data-act="speak" data-t="너무 맵지 않게 해 주세요" data-r="0.6">慢速</button></div></div>
+    <div class="ph sm"><div class="ph-zh">請幫我打包</div><div class="ph-ko kr">포장해 주세요</div><div class="ph-ro">po-jang-hae ju-se-yo</div>
+      <div class="actions"><button class="btn btn-main" data-act="speak" data-t="포장해 주세요" data-r="0.9">播放</button><button class="btn" data-act="speak" data-t="포장해 주세요" data-r="0.6">慢速</button></div></div>
+    <div class="ph sm"><div class="ph-zh">請結帳</div><div class="ph-ko kr">계산해 주세요</div><div class="ph-ro">gye-san-hae ju-se-yo</div>
+      <div class="actions"><button class="btn btn-main" data-act="speak" data-t="계산해 주세요" data-r="0.9">播放</button><button class="btn" data-act="speak" data-t="계산해 주세요" data-r="0.6">慢速</button></div></div>
+    <div class="ph sm"><div class="ph-zh">大概要等幾分鐘？</div><div class="ph-ko kr">몇 분 정도 기다려야 하나요?</div><div class="ph-ro">myeot bun jeong-do gi-da-ryeo-ya ha-na-yo?</div>
+      <div class="actions"><button class="btn btn-main" data-act="speak" data-t="몇 분 정도 기다려야 하나요?" data-r="0.9">播放</button><button class="btn" data-act="speak" data-t="몇 분 정도 기다려야 하나요?" data-r="0.6">慢速</button></div></div>
+    <h3 class="phg">付款與購物</h3>
+    <div class="ph sm"><div class="ph-zh">可以刷卡嗎？</div><div class="ph-ko kr">카드 되나요?</div><div class="ph-ro">ka-deu doe-na-yo?</div>
+      <div class="actions"><button class="btn btn-main" data-act="speak" data-t="카드 되나요?" data-r="0.9">播放</button><button class="btn" data-act="speak" data-t="카드 되나요?" data-r="0.6">慢速</button></div></div>
+    <div class="ph sm"><div class="ph-zh">可以用 ZeroPay 嗎？</div><div class="ph-ko kr">제로페이 되나요?</div><div class="ph-ro">je-ro-pe-i doe-na-yo?</div>
+      <div class="actions"><button class="btn btn-main" data-act="speak" data-t="제로페이 되나요?" data-r="0.9">播放</button><button class="btn" data-act="speak" data-t="제로페이 되나요?" data-r="0.6">慢速</button></div></div>
+    <div class="ph sm"><div class="ph-zh">這個多少錢？</div><div class="ph-ko kr">이거 얼마예요?</div><div class="ph-ro">i-geo eol-ma-ye-yo?</div>
+      <div class="actions"><button class="btn btn-main" data-act="speak" data-t="이거 얼마예요?" data-r="0.9">播放</button><button class="btn" data-act="speak" data-t="이거 얼마예요?" data-r="0.6">慢速</button></div></div>
+    <div class="ph sm"><div class="ph-zh">可以即時退稅嗎？</div><div class="ph-ko kr">즉시 환급 되나요?</div><div class="ph-ro">jeuk-si hwan-geup doe-na-yo?</div>
+      <div class="actions"><button class="btn btn-main" data-act="speak" data-t="즉시 환급 되나요?" data-r="0.9">播放</button><button class="btn" data-act="speak" data-t="즉시 환급 되나요?" data-r="0.6">慢速</button></div></div></div>
+  </section>
+  <section class="tab" id="t-info">
+    <h2 class="h">旅行資訊</h2>
+    <details class="acc" open><summary><span>航班</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="#3A2748" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></summary><div class="in"><div class="flt"><span class="c">10/29（四）BX 576</span></div>
+        <div class="flt"><span class="t">17:40</span><span class="arrow">✈</span><span class="t">21:00</span></div>
+        <div class="flt"><span class="c">台北 TPE（<b>T2</b>）</span><span class="c">釜山 PUS</span></div>
+        <hr style="border:0;border-top:1px solid var(--line);margin:12px 0">
+        <div class="flt"><span class="c">11/03（二）BX 571</span></div>
+        <div class="flt"><span class="t">10:50</span><span class="arrow">✈</span><span class="t">12:25</span></div>
+        <div class="flt"><span class="c">釜山 PUS（<b>T1</b>）</span><span class="c">台北 TPE（多半 T2）</span></div>
+        <p class="fine">Air Busan · 一筆訂單 3 位旅客。<b>去程在桃園 T2</b>，建議 <b>15:10–15:20 前</b>到報到櫃檯，機捷直達車從台北車站到 T2 約 39 分。<b>回程從金海機場 T1（國際線）起飛</b>，建議 <b>08:50 前</b>到，<b>07:30</b> 左右退房出發。抵達桃園多半是 T2（同航線班機顯示 T2，以登機證為準），在 A13 站搭直達車回台北。</p></div></details>
+<details class="acc"><summary><span>入境文件</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="#3A2748" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></summary><div class="in"><ul>
+          <li>護照效期建議 <b>6 個月以上</b>（持台灣護照免簽）</li>
+          <li><b>K-ETA</b>：台灣護照 2026/12/31 前免申請，你們這趟在免除期內</li>
+          <li><b>電子入境卡</b>：抵達當天與前 2 天可填（10/27–10/29，韓國時間），免費，填完截圖存手機。<a href="https://www.e-arrivalcard.go.kr/" target="_blank" rel="noopener">官方填寫網站</a>支援中文，也有多人一起申報的選項</li>
+          <li>填寫時留意出發地的國名顯示；外交部曾對此發布提醒，以官方最新說明為準</li>
+        </ul></div></details>
+<details class="acc"><summary><span>住宿</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="#3A2748" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></summary><div class="in"><p class="big">Felix by STX Hotel&amp;Suite</p>
+        <ul>
+          <li>入住 10/29 <b>15:00</b> · 退房 11/03 <b>11:00</b></li>
+          <li>1 間房 · 晚上 23:00 前後才到，建議先確認櫃台可辦理</li>
+          <li>回程班機早，實際 <b>07:30</b> 前後就會退房，前晚先打包</li>
+        </ul></div></details>
+<details class="acc"><summary><span>機場往返：全程搭計程車</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="#3A2748" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></summary><div class="in"><ul>
+          <li>10/29 金海機場抵達後，在國際線入境大廳外的計程車招呼站排隊搭車，或用 Kakao T / Uber 叫車，<b>沒有固定發車時間，不用趕</b></li>
+          <li>金海機場到海雲台單程約 ₩25,000–35,000、50–60 分（估計），深夜加成後可能到 ₩30,000–42,000，高速公路過路費可能另計</li>
+          <li>3 人加行李若擠，可挑大型計程車（有行李或棉被時尤其適合）</li>
+          <li>11/03 回程同樣搭計程車，07:40 前後出發，抓 70 分車程</li>
+          <li>上車前打開本頁「給司機看」，直接出示飯店韓文名稱與地址</li>
+        </ul></div></details>
+<details class="acc"><summary><span>已預約：遊艇賞無人機秀</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="#3A2748" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></summary><div class="in"><p class="big">The Bay 101 Yacht</p>
+        <ul>
+          <li><b>10/31（六）18:30</b> · 成人 3 位 · ₩147,000</li>
+          <li>無人機秀 <b>19:00</b>，在船上看，航程約 1 小時</li>
+          <li>官方須知：<b>登船前 30 分鐘到場</b>並報上預約人姓名，建議 <b>18:00 前</b>到</li>
+          <li>全預約制，遲到很難退款或改時段，所以登船前的晚餐要抓好時間</li>
+          <li>強風或下雨可能停航，確認信上的改期規則先看一眼。<a href="https://www.thebay101yacht.com/operationguide" target="_blank" rel="noopener">官方預約須知</a></li>
+        </ul></div></details>
+<details class="acc"><summary><span>計程車須知</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="#3A2748" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></summary><div class="in"><ul>
+          <li>出發前先裝好 <b>Kakao T</b> 或 Uber 並試著登入、綁卡，臨時才裝容易卡在認證</li>
+          <li>上車前按「<b>給司機看</b>」，司機看韓文最準</li>
+          <li>3 人通常一台坐得下，行李多請司機開後車廂</li>
+          <li>韓國計程車不需給小費</li>
+          <li>週末與演出散場叫車會塞，可先在咖啡廳坐 20–30 分再叫</li>
+        </ul></div></details>
+<details class="acc"><summary><span>網路、電與現金</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="#3A2748" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></summary><div class="in"><ul>
+          <li>落地前先買好 eSIM 或網卡，21:00 抵達最好一出關就能叫車</li>
+          <li>韓國 220V 圓孔插座，手機充電器多半通用；台灣 110V 的吹風機等電器別直接插</li>
+          <li>備少量韓元現金給市場與小攤；多數店家與計程車可刷卡</li>
+          <li>11/03 要退稅的商品先別託運，依機場現場指示辦理</li>
+        </ul></div></details>
+
+    <h3 class="sect" style="margin-top:20px">穿著提醒</h3>
+    <div class="wear">
+      <div class="row"><div class="k">氣溫</div><div class="v">白天多半約 <b>17–20°C</b>，早晚與海邊約 <b>10°C</b> 上下（概略值，出發前 3–5 天再看預報）。</div></div>
+      <div class="row"><div class="k">穿法</div><div class="v"><b>洋蔥式</b>：排汗或棉質長袖＋薄毛衣／衛衣＋防風外套。熱了脫、冷了加，比一件厚外套好用。</div></div>
+      <div class="row"><div class="k">山區</div><div class="v">梵魚寺與金井山比市區涼數度，Day 2 外套放包包。纜車上山風大，薄圍巾很有用。</div></div>
+      <div class="row"><div class="k">海邊夜晚</div><div class="v">海邊晚上風大，體感比溫度低。<b>Day 3 遊艇夜航可能是整趟最冷的時刻</b>，約 1 小時待在海上，薄外套不夠，帶保暖外層加圍巾。</div></div>
+      <div class="row"><div class="k">鞋子</div><div class="v"><b>好走的運動鞋或休閒鞋</b>。白淺灘石階、市場石板路與斜坡車場地都要穿好走的包鞋，不適合新鞋、高跟或拖鞋。寺院要脫鞋，襪子選好穿脫的。</div></div>
+      <div class="row"><div class="k">小物</div><div class="v">折疊傘或薄雨衣、護唇膏與乳液（秋天乾）、帽子、好摺的環保袋裝戰利品。</div></div>
+    </div>
+    <div style="height:14px"></div>
+    <div class="intel">
+      <h3>紅葉情報（단풍）</h3>
+      <p>今年秋天偏暖，楓葉比往年晚。釜山在最南端，你們 10/29–11/03 大致是<span class="hl">初楓階段</span>，市區剛開始轉色，滿楓約在 11 月中旬。</p>
+      <p>原則是<span class="hl">海拔越高越早紅</span>。最值得期待的是 Day 2 的<b>梵魚寺</b>與<b>金剛纜車</b>。萇山紫芒（억새）盛期在 10 月中下旬，11 月初已稍晚，加上爬山辛苦，這趟就不特地安排。</p>
+    </div>
+    <h3 class="sect" style="margin-top:20px">出發前待辦　<span class="ptxt"></span></h3>
+    <div class="prog" style="margin-bottom:12px"><i style="width:0"></i></div>
+    <ul class="chk" id="chk"></ul>
+    <p class="fine" style="margin-top:18px">營業時間、入境規定與演出場次皆以官方與店家最新公告為準（資料查詢於 2026/10/06）。紅葉為自然景觀，實際轉色依天候浮動。海外網路不穩時，請先把這份 HTML 存進手機，或用 PDF 當備案。</p>
+  </section>
+</main>
+<button class="btn btn-main fab" data-act="speak" data-t="영수증 주실 수 있나요?" data-r="0.9" aria-label="用韓文說：可以給我收據嗎">🧾 收據</button>
+<nav class="tabbar" aria-label="主要分頁"><div class="tabbar-in"><button class="tb" data-tab="today"><svg viewBox="0 0 100 100" aria-hidden="true" style="color:#FF8A2B"><use href="#leaf" xlink:href="#leaf"/></svg><span>今天</span></button><button class="tb" data-tab="plan"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-plan" xlink:href="#i-plan"/></svg><span>行程</span></button><button class="tb" data-tab="book"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-book" xlink:href="#i-book"/></svg><span>預約</span></button><button class="tb" data-tab="tools"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-tools" xlink:href="#i-tools"/></svg><span>工具</span></button><button class="tb" data-tab="info"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-info" xlink:href="#i-info"/></svg><span>資訊</span></button></div></nav>
+
+<div class="sheet" id="sos" role="dialog" aria-modal="true" aria-label="緊急資訊"><div class="sheet-in">
+  <div class="sheet-h"><h2>緊急資訊</h2><button class="btn" data-act="closesheet" data-id="sos">關閉</button></div>
+  <p class="lead">台灣機構的資訊來自外交部領事事務局官網。</p>
+  
+    <div class="pcard accent">
+      <h3>外交部旅外國人急難救助專線</h3>
+      <div class="sos-row"><b>0800-085-095</b><button class="btn" data-act="copy" data-t="0800-085-095">複製</button></div>
+      <p class="fine">從韓國撥打的方式請看外交部「緊急聯絡中心」頁面。</p>
+    </div>
+    <div class="pcard" style="margin-top:12px">
+      <h3>駐韓國台北代表部釜山辦事處</h3>
+      <ul>
+        <li>地址：<span class="ko kr">부산광역시 중구 중앙대로 70 동원산업빌딩 9층</span>（中央大路 70 號東遠大樓 9F）</li>
+        <li>電話（上班時間）：051-463-7965 <button class="btn" data-act="copy" data-t="051-463-7965">複製</button></li>
+        <li>緊急聯絡電話：010-4537-7961（只限中文，非急難事件請勿撥打）<button class="btn" data-act="copy" data-t="010-4537-7961">複製</button></li>
+        <li>領務櫃檯 09:00–11:30（免預約），週休二日與韓國國定假日不對外開放</li>
+        <li>Email：pus@mofa.gov.tw</li>
+      </ul>
+      <div class="actions"><a class="btn" target="_blank" rel="noopener" href="https://www.roc-taiwan.org/krpus/">辦事處官網</a><a class="btn" target="_blank" rel="noopener" href="https://www.boca.gov.tw/np-53-1.html">外交部緊急聯絡中心</a></div>
+    </div>
+    <div class="pcard" style="margin-top:12px">
+      <h3>韓國當地</h3>
+      <ul>
+        <li>警察 <b>112</b>　消防與救護 <b>119</b>　旅遊諮詢 <b>1330</b>（可說外語，號碼為韓國通用，未逐一核對）</li>
+        <li>飯店電話請從訂房確認信複製，存進手機。</li>
+      </ul>
+    </div>
+</div></div>
+<div class="driver" id="driver" role="dialog" aria-modal="true" aria-label="給司機看">
+  <p class="say">여기로 가 주세요. 감사합니다.</p>
+  <p class="nm2" id="d-nm"></p><p class="ad" id="d-ad"></p><p class="en" id="d-en"></p><p class="zh" id="d-zh"></p>
+  <div class="row"><button class="btn btn-main" id="d-copy">複製地址</button><button class="btn" id="d-close">關閉</button></div>
+</div>
+<div class="ldlg" id="ld" role="dialog" aria-modal="true" aria-label="開啟連結"><div class="ld-card">
+  <h3>這個環境擋住了外部連結</h3><p>請選一種方式開啟：</p><div class="ld-url" id="ld-url"></div>
+  <div class="row"><button class="btn btn-main" id="ld-top">在目前分頁開啟</button><button class="btn" id="ld-copy">複製連結</button></div>
+  <p class="ld-note">「在目前分頁開啟」會離開這一頁，按返回可回來。也可以長按下方連結，選「在新分頁開啟」，或複製後貼到瀏覽器或地圖 App。</p>
+  <a id="ld-link" class="ld-a" target="_blank" rel="noopener">長按這裡開啟連結</a>
+  <div class="row"><button class="btn" id="ld-close">關閉</button></div>
+</div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+
+const HOTEL={ko:'부산 해운대구 해운대로 620',en:'620 Haeun-daero, Haeundae-gu, Busan'};
+const AIRPORT={ko:'부산 강서구 공항진입로 108',en:'108 Gonghangjinip-ro, Gangseo-gu, Busan'};
+
+const DAYS=[
+{n:1,date:'10 / 29（四）',title:'晚班機抵達 · 計程車直送飯店',tag:['warn','21:00 降落 · 搭計程車'],
+ wear:'搭機與夜間抵達：<b>薄長袖＋外套</b>。深夜海風會涼，外套放隨身包。',
+ brief:["17:40 起飛，15:10–15:20 前到桃園 T2 櫃檯", "21:00 抵達金海機場，出關與領行李抓 45–90 分", "計程車到飯店約 50–60 分，約 23:00 後入住（接機車已取消，沒有固定發車死線）"],
+ stops:[
+ {type:'info',time:'約 14:20 – 15:00',name:'搭機捷直達車前往桃園機場 T2',
+  tip:'台北車站（A1）到 A13 第二航廈，直達車約 39 分，班距約 15 分。<b>去程在 T2</b>，別在 T1 下車。T1、T2 之間的管制區外航廈電車 7/1 起已停駛，下錯站會很麻煩。你們不是從台北車站上車的話，從 15:10 抵達 T2 往前推。'},
+ {key:1,star:1,time:'15:10 – 15:20 前到',name:'桃園機場第二航廈（T2）報到',badge:'T2',
+  tip:'<b>建議 15:10–15:20 前到報到櫃檯</b>（起飛前約 2 小時 20–30 分）。釜山航空櫃檯約起飛前 3 小時開，廉航櫃檯關閉通常較早，別卡線。航班資料顯示 Air Busan 桃園出發班機在 T2，櫃檯編號以當天航廈看板為準。'},
+ {type:'info',time:'17:40 起飛',name:'台北 TPE（T2）→ 釜山 PUS　Air Busan BX 576',
+  tip:'21:00 抵達金海機場國際線。出發前先填好電子入境卡（10/27–10/29），出關會快很多。'},
+ {key:1,time:'21:00 起',name:'金海國際機場　國際線航廈入境 &amp; 領行李',ko:'김해국제공항',addr:AIRPORT,
+  tip:'接機車取消後，出關時間不再有 22:00 的死線。電子入境卡先填好、不託運行李會最快。入境與領行李抓 45–90 分。'},
+ {key:1,star:1,time:'約 22:00 – 22:30',name:'搭計程車前往飯店',badge:'計程車',ko:'Felix by STX Hotel & Suite',addr:HOTEL,
+  tip:'<b>到國際線入境大廳外的計程車招呼站排隊</b>，也可以用 Kakao T / Uber 叫車。上車前按「給司機看」出示飯店名稱與地址。單程約 ₩25,000–35,000（估計），深夜加成可能到 ₩30,000–42,000，過路費可能另計。3 人加行李若擠，可選大型計程車。價格與加成為估計，以跳表為準。'},
+  {time:'約 23:00 後',name:'Felix by STX Hotel&amp;Suite　下車 &amp; Check-in',ko:'Felix by STX Hotel & Suite',addr:HOTEL,
+  tip:'金海機場到海雲台約 50–60 分。入住時間是 15:00，晚到請確認櫃台可辦理。地址已與你的訂房資料核對（48094）。'},
+ {time:'23:30 起（選配）',name:'海雲台海灘夜散步',ko:'해운대해수욕장',addr:{ko:'부산 해운대구 해운대해변로 264',en:'264 Haeundaehaebyeon-ro, Haeundae-gu, Busan'},
+  tip:'太累就直接睡，海灘明天還有機會。市場與小吃攤多半早收，宵夜備案是便利商店。'}
+ ]},
+
+{n:2,date:'10 / 30（五）',title:'釜山北部 · 梵魚寺賞楓 · 辣燉排骨與宵夜',tag:['maple','🍁 紅葉重點日 · 단풍'],
+ wear:'山區比市區涼：<b>排汗內層＋薄毛衣＋防風外套</b>。寺院石階多，穿好走的鞋。',
+ brief:["09:30 從飯店出發；梵魚寺 08:00–17:00 開放，入場免費", "金剛纜車週一公休，今天週五可搭，約 17:30 前結束", "18:00 辣燉排骨店：營業時間我沒查到，先確認", "21:00 南川家宵夜，最後點餐 22:45"],
+ checks:["14:45 到金剛公園纜車站，最晚 16:45 離開，別拖到 17:00 後", "南川家：最晚 22:15 前入座，先用 Tabling 登記候位"],
+ backup:"下雨：梵魚寺殿宇可以避雨，但山區石階濕滑，鞋底要防滑。纜車遇強風或下雨可能停駛，就改在金剛公園散步，提早去吃晚餐。",
+ stops:[
+ {key:1,star:1,time:'10:00 – 12:15',name:'梵魚寺',ko:'범어사',addr:{ko:'부산 금정구 범어사로 250',en:'250 Beomeosa-ro, Geumjeong-gu, Busan'},
+  tip:'<b>全程最佳賞楓點之一。</b>千年古剎在金井山山腳，海拔稍高先轉色，10/30 多半是初楓，沿一柱門走到大雄殿慢慢逛。海雲台出發約 40 分上下，09:15 前後叫車、09:30 出發。10:00 到的人會比 09:00 多，想避開人潮就往大雄殿後方走。山門口不一定好攔車，結束前 15 分先用 App 叫。'},
+ {time:'12:45 – 14:15',name:'東萊老奶奶煎餅　午餐',ko:'동래할머니파전',addr:{ko:'부산 동래구 명륜로94번길 43-10',en:'43-10 Myeongnyun-ro 94beon-gil, Dongnae-gu, Busan'},
+  tip:'百年<span class="ko kr">동래파전</span>，海鮮蔥餅配<span class="ko kr">막걸리</span>最對味。'},
+ {key:1,star:1,time:'14:45 – 16:45',name:'金剛公園 &amp; 金剛纜車',ko:'금강공원 케이블카',addr:{ko:'부산 동래구 우장춘로 155',en:'155 Ujangchun-ro, Dongnae-gu, Busan'},
+  tip:'<b>最可能拍到真紅葉的地方。</b>搭纜車上金井山，海拔越高楓色越濃，山頂可走到金井山城望樓看全景。纜車營運與強風停駛以現場公告為準。'},
+ {time:'18:00 – 19:30',name:'辣燉排骨晚餐　빨간돼지삼매경（田浦）',badge:'IG 推薦',ko:'빨간돼지삼매경',addr:{ko:'부산 부산진구 동천로 121 1층',en:'121 Dongcheon-ro, Busanjin-gu, Busan'},
+  links:[{l:'Naver 地圖（找預約）',u:'https://map.naver.com/p/search/'+encodeURIComponent('빨간돼지삼매경 동천로 121')}],warn:1,
+  tip:'IG 推薦的<span class="ko kr">매운 갈비찜</span>（辣燉排骨）。<b>我查不到這家的營業時間與預約方式</b>，出發前請用 Naver 地圖確認，週五晚餐時段建議先預約或提早到。田浦在西面旁，這趟只是去吃飯。'},
+ {time:'21:00 – 22:30',name:'海雲台南川家　宵夜（남천집）',ko:'남천집',addr:{ko:'부산 해운대구 중동2로 21 1층',en:'21 Jungdong 2-ro, Haeundae-gu, Busan'},
+  links:[{l:'Naver 地圖（找預約）',u:'https://map.naver.com/p/search/'+encodeURIComponent('남천집 해운대')}],
+  tip:'IG 推薦的<b>三合＋煎餅＋막걸리</b>。這裡的「瑪格麗特」是韓國米酒<span class="ko kr">막걸리</span>（馬格利），不是調酒。<span class="ko kr">문어/홍어삼합</span>約 ₩55,000，<span class="ko kr">해물파전</span>約 ₩28,000，<span class="ko kr">생탁</span>米酒 ₩4,500（2026/9 的遊記價格，以店內為準）。<b>홍어（鰩魚）有強烈氨味</b>，第一次吃建議點<span class="ko kr">문어</span>（章魚）三合。營業時間週一至週六 16:00–24:00（最後點餐 22:45），週日到 23:00（最後點餐 21:45）。晚上常要候位，可先用 Tabling（테이블링）App 排隊。連吃兩餐吃不下的話，宵夜可以改到別天。'}
+ ]},
+
+{n:3,date:'10 / 31（六）',title:'影島海洋藝術 · 牛骨湯 · 遊艇賞無人機秀',tag:['warn','18:30 遊艇出航，18:00 前到場'],
+ wear:'影島石階多、海風大：<b>防風外套＋好走的鞋</b>。晚上遊艇在海上風大，<b>帶保暖外層與圍巾</b>。',
+ brief:["17:00 前要在巨大곰탕入座，否則放棄", "17:30 前到 The Bay 101 報到（登船前 30 分），18:30 出航", "19:00 船上看無人機秀，航程約 1 小時", "巨大곰탕 07:00–21:00（最後點餐 20:30），全年無休"],
+ checks:["14:50 前上計程車離開 P.ARK；趕不上就略過 P.ARK 的後半", "17:00 還沒在巨大곰탕入座就放棄。船回港後（約 19:30 起）還來得及回頭吃，最後點餐 20:30", "17:30 沒到 The Bay 101：遲到很難退款或改期（官方須知）"],
+ backup:"白天下雨：白淺灘與깡깡이只走一處，多留時間在海女館與 P.ARK 的室內。遊艇若因強風或下雨停航：依官方須知辦退款或改期，晚上改去海雲台的 SEA LIFE 水族館（週末 10:00–20:00，最後入場 19:00，電話 051-740-1700，離海灘步行約 3 分鐘），來不來得及要看通知的時間，趕不上就直接吃晚餐休息。",
+ stops:[
+ {time:'09:00 – 10:45',name:'白淺灘文化村',ko:'흰여울문화마을',addr:{ko:'부산 영도구 흰여울길 379',en:'1043 Yeongseon-dong 4-ga, Yeongdo-gu, Busan'},
+  tip:'海景咖啡加海岸隧道，石階多。週六人潮較多，早點到。'},
+ {time:'11:00 – 12:15',name:'影島海女文化展館　午餐（吃輕一點）',addr:{ko:'부산 영도구 중리남로 2-36',en:'2-36 Jungninam-ro, Yeongdo-gu, Busan'},
+  tip:'現撈海膽與海鮮。晚餐要吃牛骨湯，午餐份量抓輕一點。'},
+ {time:'12:30 – 13:45',name:'깡깡이藝術村',ko:'깡깡이예술마을',addr:{ko:'부산 영도구 대평북로 36',en:'36 Daepyeongbuk-ro, Yeongdo-gu, Busan'},
+  tip:'老造船廠改造的藝術村，壁畫與工業風。想替行程減壓的話，這站可以直接跳過。'},
+ {time:'14:00 – 15:00',name:'P.ARK Cafe &amp; Culture Center',addr:{ko:'부산 영도구 해양로195번길 180',en:'180 Haeyang-ro 195beon-gil, Yeongdo-gu, Busan'},
+  tip:'大型海景咖啡，這天最後的影島休息站。'},
+ {type:'info',time:'15:00 – 15:50',name:'計程車前往海雲台冬柏站一帶',
+  tip:'週六下午車多，抓 50 分。<b>上車就先用 CatchTable 登記巨大的排隊</b>（見下一站按鈕），到店時差不多輪到。'},
+ {key:1,star:1,time:'16:00 – 17:00',name:'巨大牛骨湯　登船前晚餐',badge:'必吃',ko:'거대곰탕 해운대 본점',addr:{ko:'부산 해운대구 해운대해변로 163',en:'163 Haeundaehaebyeon-ro, Haeundae-gu, Busan'},
+  links:[{l:'CatchTable 排隊／預約',u:'https://app.catchtable.co.kr/ct/shop/geodaegomtang'}],warn:1,
+  tip:'<b>可以在登船前先吃，但要抓好時間。</b>本店在冬柏站 1 號出口附近，走到 The Bay 101 約 10–15 分。排隊差很多：有旅客分享過等很久，也有人平日早上直接入座；週六傍晚人多，所以 16:00 前到。<b>17:00 還沒進店就先放棄</b>，船票不能賭，改在回港後補（約 19:45 前到，旅客分享最後點餐約 20:30），再不行就 Day 5 在 Spa Land 同棟的新世界百貨 B1 分店補。濃厚白湯曾有旅客反映中午前就賣完，傍晚可能吃不到。'},
+ {type:'info',time:'17:00 – 17:30',name:'步行前往 The Bay 101',
+  tip:'走路約 10–15 分。日落約 17:30 前後，碼頭邊剛好能看夕照。'},
+ {key:1,star:1,time:'17:30 報到 · 18:30 出航',name:'The Bay 101 Yacht　遊艇賞無人機秀',badge:'已預約',ko:'더베이101 요트',addr:{ko:'부산 해운대구 동백로 52',en:'52 Dongbaek-ro, Haeundae-gu, Busan'},
+  links:[{l:'官方預約須知',u:'https://www.thebay101yacht.com/operationguide'}],warn:1,
+  tip:'<b>官方規定登船前 30 分鐘到場，報上預約人姓名；遲到很難退款或改期。</b>建議 17:30 到，<b>18:00 前一定要到</b>。無人機秀 19:00，在船上看，航程約 1 小時。晚上海上很冷，外套與圍巾一定要帶。強風或下雨可能停航，確認信上的改期規則先看一眼。'},
+ {time:'19:30 起',name:'回港後自由活動',
+  tip:'若登船前沒吃到巨大，直接走去排：19:45 前到比較穩（旅客分享最後點餐約 20:30），冷了一晚正好喝熱湯。吃過了就在 The Bay 101 的咖啡廳坐一下，再叫車回飯店。'}
+ ]},
+
+{n:4,date:'11 / 01（日）',title:'機張一日 · 斜坡車 · 伴手禮 · 彩繪蛋糕',tag:['pine','機張 · 玩樂日'],
+ wear:'斜坡車在戶外高速下滑：<b>防風外套、包鞋</b>，長髮綁起來，口袋不放鬆散小物。彩繪蛋糕穿不怕沾到奶油的上衣。',
+ brief:["10:00 斜坡車；入場截止在結束前 30 分（約 17:30–18:00）", "樂天 outlet 10:30–20:00，餐廳區到 21:00", "14:30 彩繪蛋糕：營業時間我沒查到，請先預約", "18:00 돌닭：旅客資料 15:00–16:30 休息、最後點餐 21:00"],
+ checks:["蛋糕先問店家：能不能盒裝帶走、能不能在店內吃。外帶蛋糕進餐廳與咖啡廳多半不方便（我沒查證），建議在店內吃完或回飯店享用", "抱著蛋糕搭計程車，3 人加蛋糕可以選大型計程車。我的建議是不用包半天車，包車價格我沒查，真的需要再報價比較", "斜坡車票先在線上買好，週日人多"],
+ backup:"斜坡車遇天氣不佳可能暫停（官方說明依現場判斷）。前一晚與當天早上看天氣，也可電話 051-722-6002 確認。取消時：午餐與逛街時間拉長在樂天 outlet，彩繪蛋糕往前排，下午改去海雲台的 SEA LIFE 水族館（週日 10:00–20:00，最後入場 19:00），再去廣安里吃 18:00 的晚餐。",
+ stops:[
+ {type:'info',time:'09:15 – 10:00',name:'計程車前往機張（東釜山觀光園區）',
+  tip:'海雲台到機張約 30–40 分（估計）。斜坡車 10:00 開門，早一點到最順。'},
+ {key:1,star:1,time:'10:00 – 11:45',name:'斜坡車　Skyline Luge Busan',badge:'建議先買票',ko:'스카이라인 루지 부산',addr:{ko:'부산 기장군 기장읍 기장해안로 205',en:'205 Gijanghaean-ro, Gijang-eup, Gijang-gun, Busan'},
+  links:[{l:'官方網站',u:'https://busan.skylineluge.kr/ko/'},{l:'Waug 購票',u:'https://www.waug.com/ko/activities/120453'}],
+  tip:'搭纜車上山，再坐特製斜坡車沿 4 條賽道下滑，全長約 2.4 公里，每趟約 15–20 分。營業約 10:00–18:30，結束前 30 分停止入場（時段依季節調整，以官網為準）。<b>週日人多，開門前後去最順。</b>下雨或強風可能暫停；身高、年齡與健康限制請看官網。第三方平台多半 2 趟起售，票價以頁面為準。'},
+ {time:'12:00 – 14:00',name:'樂天購物中心東釜山　午餐 &amp; 伴手禮',ko:'롯데프리미엄아울렛 동부산점',addr:{ko:'부산 기장군 기장읍 기장해안로 147',en:'147 Gijanghaean-ro, Gijang-eup, Gijang-gun, Busan'},
+  tip:'離斜坡車很近，同一園區有樂天超市、Premium Outlet 與美食區，伴手禮買零食、海苔、燒酒都方便。11 月起是冬季營業時間：週末與假日約 10:30–21:00，平日到 20:30（旅遊資料，以官網為準）。這站與下一站彩繪蛋糕二選一也可以。'},
+ {time:'14:30 – 16:30（二選一）',name:'彩繪蛋糕　Atelier 에이틀리에 화실 부산기장점',badge:'建議預約',ko:'에이틀리에 화실 부산기장점',addr:{ko:'부산 기장군 일광읍 문동리 171-1',en:'171-1 Mundong-ri, Ilgwang-eup, Gijang-gun, Busan'},
+  links:[{l:'Naver 地圖（找預約）',u:'https://map.naver.com/p/search/'+encodeURIComponent('에이틀리에 화실 부산기장점')}],warn:1,
+  tip:'<b>我查不到這家的營業時間與價格，請務必先預約並確認時段。</b>同類的彩繪蛋糕體驗通常要預約、約 2 小時，可以先想好要畫的圖案。地址是你提供的地號地址，司機輸入不到時，請用 Naver 地圖搜尋店名。'},
+ {type:'info',time:'16:30 – 17:30',name:'計程車前往廣安里',
+  tip:'機張到廣安里約 40–50 分（估計），週日傍晚車多，以 App 估時為準。'},
+ {key:1,star:1,time:'18:00 – 19:30',name:'石板雞　돌닭 광안점',badge:'需預約',ko:'돌닭 광안점',addr:{ko:'부산 수영구 광남로 97 1층',en:'97 Gwangnam-ro, Suyeong-gu, Busan'},
+  links:[{l:'Naver 地圖（找預約）',u:'https://map.naver.com/p/search/'+encodeURIComponent('돌닭 광안점')},{l:'Instagram',u:'https://www.instagram.com/doldak_busan'}],
+  tip:'石板上煮的辣燉雞（<span class="ko kr">닭볶음탕</span>），養雞場概念的店，離金蓮山站步行約 5 分。旅客資料：營業 11:00–22:00，<b>15:00–16:30 休息</b>，最後點餐 21:00，電話 0507-1403-1289。週日傍晚人多，先預約。'},
+ {time:'19:45 – 21:00',name:'夜景咖啡　Working Holiday（3 樓）',badge:'IG 推薦',ko:'워킹홀리데이',addr:{ko:'부산 수영구 광안해변로 235 3층',en:'3F, 235 Gwanganhaebyeon-ro, Suyeong-gu, Busan'},
+  links:[{l:'Naver 地圖（找營業時間）',u:'https://map.naver.com/p/search/'+encodeURIComponent('워킹홀리데이 광안리 광안해변로 235')}],
+  tip:'廣安里海灘正面的咖啡廳，3 樓看廣安大橋夜景，也有披薩與義大利麵。有旅客分享週六的無人機秀在店內看得很清楚；今晚週日沒有秀，但大橋夜間通常會點燈。<b>營業時間我查不到</b>，出發前用 Naver 地圖確認。喝完沿海邊走走，再叫車回海雲台。'}
+ ]},
+
+{n:5,date:'11 / 02（一）',title:'南浦逛街 · 配眼鏡與買棉被 · 放鬆',tag:['maple','🛍 逛街購物日'],
+ wear:'逛市場走不少路：<b>舒適的鞋＋薄外套</b>，包包選能拉好拉鍊的。晚上 Spa Land 帶好換洗衣物與髮圈。',
+ brief:["今天週一：眼鏡店、鮑魚粥店、豬皮烤肉店我都沒查到公休資料，出發前用 Naver 確認", "國際市場週日休息，今天週一可逛", "15:00–17:30 SPA LAND（入場後最多 4 小時）；17:30 要離開", "18:00 초필살돼지구이：沒有線上預約，16:30 起可現場候位"],
+ checks:["眼鏡店：先確認鏡片能不能當天取。行程只剩今天，不能當天取就換方案", "買棉被前先確認 Air Busan 託運額度"],
+ stops:[
+ {key:1,time:'08:00 – 09:00',name:'早餐　原祖鮑魚粥（원조전복죽집）',badge:'早餐首選',ko:'원조전복죽집',addr:{ko:'부산 해운대구 해운대해변로298번길 24 1층 23호',en:'1F Unit 23, 24 Haeundaehaebyeon-ro 298beon-gil, Haeundae-gu, Busan'},
+  links:[{l:'Naver 地圖（找營業時間）',u:'https://map.naver.com/p/search/'+encodeURIComponent('원조전복죽집 해운대')}],
+  tip:'<b>清淡暖胃，適合吃完前幾天大餐的早上。</b>用鮑魚內臟熬的鮑魚粥（<span class="ko kr">전복죽</span>），粥色偏青綠。旅客資料：每天 06:30–23:00，鮑魚粥約 ₩15,000，也有鮑魚海藻拌飯與鮑魚海鮮豆芽菜湯（約 ₩10,000），價格以現場為準。電話 051-742-4690。'},
+ {time:'備案（擇一）',name:'바다마루 전복죽（美浦）',badge:'備案',ko:'바다마루 전복죽',addr:{ko:'부산 해운대구 달맞이길62번길 7',en:'7 Dalmaji-gil 62beon-gil, Haeundae-gu, Busan'},
+  links:[{l:'Naver 地圖（找營業時間）',u:'https://map.naver.com/p/search/'+encodeURIComponent('바다마루 전복죽')}],
+  tip:'30 年老店的鮑魚粥。旅客資料：營業 07:00–14:30、16:00–20:30，電話 051-746-0397。在美浦站附近，要搭計程車（以地圖為準）。'},
+ {time:'備案（擇一）',name:'오복돼지국밥（豬肉湯飯，24 小時）',badge:'備案',ko:'오복돼지국밥',addr:{ko:'부산 해운대구 구남로 15 1층',en:'15 Gunam-ro, Haeundae-gu, Busan'},
+  links:[{l:'Naver 地圖（找營業時間）',u:'https://map.naver.com/p/search/'+encodeURIComponent('오복돼지국밥 해운대')}],
+  tip:'想吃份量足的就選這家。3 代傳承的豬肉湯飯，旅客資料每天 24 小時營業，<span class="ko kr">돼지국밥</span>約 ₩10,000，在海雲台站 3 號出口約 110 公尺。晚餐已經排了豬皮烤肉，不想連吃豬肉的話，選上面的鮑魚粥。'},
+
+ {type:'info',time:'09:30 – 10:30',name:'計程車前往南浦／光復路',
+  tip:'海雲台到南浦約 40–50 分，週一早上可能更久，先用 App 看估時。'},
+ {key:1,star:1,time:'10:30 – 12:00',name:'瞳孔眼鏡店　配眼鏡',badge:'先確認',addr:{ko:'부산 중구 광복로35번길 15',en:'15, Gwangbok-ro 35beon-gil, Jung-gu, Busan'},
+  links:[{l:'Naver 地圖（找營業時間）',u:'https://map.naver.com/p/search/'+encodeURIComponent('부산 중구 광복로35번길 15')}],warn:1,
+  tip:'<b>這家店的營業時間與是否需預約，我查不到公開資料。</b>出發前請用 Naver 地圖確認，並先問能否當天取件。帶著現有眼鏡或度數單，現場驗光、選鏡框，等鏡片的時候順便去逛市場。'},
+ {time:'12:00 – 13:30',name:'國際市場 &amp; 富平罐頭市場　逛街、買棉被、午餐',ko:'국제시장',addr:{ko:'부산 중구 신창동4가 국제시장',en:'Gukje Market, Sinchang-dong 4-ga, Jung-gu, Busan'},
+  tip:'<b>國際市場週日休市</b>（旅遊資料，也有說法是特定週日），所以排在週一。營業約 09:00–20:00，各攤位不同。寢具店現場找，或在 Naver 搜尋<span class="ko kr">국제시장 이불</span>。多數攤商偏好現金，禮貌砍價。<b>棉被體積大：Air Busan 是廉航，先確認託運行李額度</b>，也可請店家真空壓縮。隔壁富平罐頭市場（<span class="ko kr">부평깡통시장</span>，<span class="kr">부산 중구 부평1길 48</span>）小吃多，午餐可在這裡解決。'},
+ {type:'info',time:'13:30 – 14:20',name:'計程車回飯店放棉被',
+  tip:'南浦到海雲台約 40–50 分（估計）。先回飯店把棉被與戰利品放下，Spa Land 不要拖著大包小包。'},
+ {time:'14:20 – 14:40',name:'回飯店放棉被與戰利品',ko:'Felix by STX Hotel & Suite',addr:HOTEL,
+  tip:'放下東西，拿好 Spa Land 要用的換洗衣物與髮圈。'},
+ {type:'info',time:'14:40 – 15:00',name:'計程車前往 Centum City',
+  tip:'飯店到 Centum City 約 15 分（估計）。'},
+ {time:'15:00 – 17:30',name:'SPA LAND Centum City',ko:'스파랜드 센텀시티',addr:{ko:'부산 해운대구 센텀남대로 35',en:'35 Centum nam-daero, Haeundae-gu, Busan'},
+  tip:'汗蒸幕放鬆，把逛街走累的腳好好泡一泡。<b>17:30 前離開</b>，才趕得上廣安里的晚餐排隊。<b>備案：</b>Day 3 沒吃到巨大的話，同棟新世界百貨 B1 美食街有旅客分享設有分店（Google 地圖上不一定查得到，到 B1 找<span class="ko kr">거대곰탕</span>招牌）。'},
+ {type:'info',time:'17:30 – 18:00',name:'計程車前往廣安里',
+  tip:'Centum City 到廣安里約 15–20 分（估計），傍晚車多，抓 30 分。'},
+ {key:1,star:1,time:'18:00 – 19:30',name:'초필살돼지구이　廣安直營店　招牌豬皮',badge:'IG 推薦',ko:'초필살돼지구이 광안직영점',addr:{ko:'부산 수영구 광남로108번길 9 1층',en:'9 Gwangnam-ro 108beon-gil, Suyeong-gu, Busan'},
+  links:[{l:'Naver 地圖（找預約）',u:'https://map.naver.com/p/search/'+encodeURIComponent('초필살돼지구이 광안직영점')},{l:'Instagram',u:'https://www.instagram.com/chopilsal_official'}],
+  tip:'<b>點招牌：蜂巢狀厚切豬皮（<span class="ko kr">껍데기</span>）。</b>西面與海雲台也有分店。旅客資料（2026/7）：每天 17:00–01:00，<b>現場候位 16:30 開放</b>，晚餐時段要有排隊的心理準備。這趟最後一晚，吃完回飯店<b>先把行李打包</b>（棉被別忘了），明早 07:30 就要退房，護照與登機資料放在最外層。'},
+ {time:'備案（擇一）',name:'연막창 광안리점　招牌烤大腸',badge:'備案',ko:'연막창 광안리점',addr:{ko:'부산 수영구 광남로 122 105-1호',en:'122 Gwangnam-ro, Unit 105-1, Suyeong-gu, Busan'},
+  links:[{l:'Naver 地圖（找預約）',u:'https://map.naver.com/p/search/'+encodeURIComponent('연막창 광안리점')},{l:'Instagram',u:'https://www.instagram.com/dhrtp2628'}],warn:1,
+  tip:'<b>點招牌：連葉熟成的烤大腸（<span class="ko kr">연잎숙성 막창</span>）。</b><b>這個地址是你提供的，我沒能查證。</b>其他分店資料：初벌（預先烤過）連葉막창 200g 約 ₩12,000，可用 CatchTable 排隊。廣安店的營業時間與預約方式請用 Naver 確認。口感偏 Q 彈，不愛內臟的人可改選上一家。'},
+ {time:'備案（擇一）',name:'물보라 광안　海鮮포차',badge:'備案',ko:'물보라 광안',addr:{ko:'부산 수영구 남천바다로33번길 105',en:'105 Namcheonbada-ro 33beon-gil, Suyeong-gu, Busan'},
+  links:[{l:'Tabling 排隊',u:'https://www.tabling.co.kr/place/677cd44466de5f06988d1765'},{l:'Naver 地圖',u:'https://map.naver.com/p/search/'+encodeURIComponent('물보라 광안')},{l:'Instagram',u:'https://www.instagram.com/nnoolbora'}],warn:1,
+  tip:'想吃海鮮、喝一杯的話選這家。<b>地址我用查到的 남천바다로33번길 105，和你給的不同，請核對。</b>旅客資料：17:00–03:00（最後點餐 02:00），可預約，很吵；招牌<span class="ko kr">물보라한상</span>約 ₩75,000、<span class="ko kr">모듬회</span>。明早 07:30 退房，別待太晚。'}
+ ]},
+
+{n:6,date:'11 / 03（二）',title:'早班機返程',tag:['warn','10:50 起飛 · 07:30 退房'],
+ wear:'早起搭機：<b>好穿脫的外套＋長袖</b>，機上冷氣強，薄外套放隨身包。',
+ brief:["07:30 退房，07:40 計程車出發（抓 70 分車程）", "08:45–08:50 前到金海機場 T1 報到", "10:50 起飛；要退稅的商品不要先託運", "12:25 抵達桃園，航廈看登機證"],
+ stops:[
+ {time:'07:30',name:'飯店 Check-out',ko:'Felix by STX Hotel & Suite',addr:HOTEL,
+  tip:'退房時間是 11:00，但班機早，07:30 前後就要出發。前一晚請櫃台幫忙叫車，或用 App 提早預約。早餐在便利商店或機場解決。'},
+ {type:'info',time:'07:40 – 08:45',name:'計程車前往金海機場',
+  tip:'約 50–60 分，早上通勤可能更久，抓 70 分比較保險。單程約 ₩25,000–35,000（估計）。若 Day 5 買了棉被或行李變多，可選大型計程車。'},
+ {key:1,star:1,time:'08:45 – 09:00 前',name:'金海國際機場 T1　國際線報到',ko:'김해국제공항',addr:AIRPORT,
+  tip:'<b>建議 08:50 前抵達</b>（起飛前 2 小時）。Air Busan 是廉航，櫃台關閉時間較早，別卡線。要退稅的商品先別託運，依現場指示辦理。伴手禮：魚板、海苔、燒酒。'},
+ {type:'info',time:'10:50 起飛',name:'釜山 PUS（T1）→ 台北 TPE　Air Busan BX 571',tip:'12:25 抵達桃園機場，多半在 T2。'},
+ {type:'info',time:'12:25 起',name:'桃園機場 → 機捷回台北',
+  tip:'<b>抵達航廈多半是 T2</b>（同航線班機顯示 T2，以登機證與看板為準）。入境與領行李抓 45–60 分（估計），之後在 A13 第二航廈站搭直達車回台北車站，約 39 分，班距約 15 分，預計 14:00–14:30 前後回到台北車站（若是 T1 則在 A12 站搭，約 35 分）。這趟辛苦了。'}
+ ]}
+];
+
+const CHECK=[
+ '護照效期 6 個月以上',
+ '10/27–10/29 填好電子入境卡，並截圖存手機',
+ '金海機場抵達後搭計程車：確認 Kakao T / Uber 已綁卡，備好少量現金',
+ '去程桃園 T2；回程金海機場 T1（國際線）；回台灣的桃園航廈看登機證',
+ '安裝 Kakao T 或 Uber，登入並綁好信用卡',
+ '安裝 Naver 地圖（韓國步行與大眾運輸導航最準）',
+ '安裝 CatchTable 與 Tabling，試著登入（巨大、南川家排隊用）',
+ '預約 11/01 的石板雞（돌닭）與彩繪蛋糕 Atelier',
+ '買好 11/01 的斜坡車票（或確認現場買票）',
+ '打開遊艇預約確認信，確認 18:30 出航與登船報到規則',
+ '出發前一天查 10/31 天氣與遊艇是否停航',
+ '用 Naver 地圖確認辣燉排骨店、眼鏡店、鮑魚粥店與 Atelier 的營業與公休（Day 5 是週一）',
+ '全支付切到韓國並儲值；選好刷卡用哪張信用卡（免海外手續費或海外回饋高）',
+ '把外交部急難專線與釜山辦事處電話存進手機（見「緊急」）',
+ '若要用 LINE Pay：更新 App、開啟定位服務，到「遊韓專區」確認條碼會切到韓國',
+ '出發前一天與當天早上確認斜坡車營運（051-722-6002）',
+ '確認 Air Busan 託運行李額度（要買棉被）',
+ '買好 eSIM 或網卡，換少量韓元現金',
+ '截圖或加入主畫面，保存這份行程'
+];
+
+const INFO={
+ "부산 해운대구 해운대해변로 264": {
+  "intro": "韓國最知名的海灘。白天人多，夜裡沿岸燈光和海風很舒服，散步十幾分鐘就夠。",
+  "pay": "建議：沿岸便利商店與小店先找 ZeroPay / HIVEX 標誌，有就用全支付，沒有就信用卡或現金。",
+  "q": "해운대해수욕장 야경",
+  "hrs": "海灘全天開放。"
+ },
+ "부산 금정구 범어사로 250": {
+  "intro": "相傳創建於新羅時代（678 年）的古剎，坐落在金井山山腳，秋天寺內與登山道一帶楓紅，是釜山賞楓名所。",
+  "pay": "建議：入場費用以現場公告為準。周邊小吃與攤販先找 ZeroPay / HIVEX 標誌，備少量現金。",
+  "q": "범어사 단풍",
+  "hrs": "08:00–17:00 全年無休（官方旅遊資料）；入場免費，停車約 ₩3,000。10 月底到 11 月中是楓葉季。"
+ },
+ "부산 동래구 명륜로94번길 43-10": {
+  "intro": "東萊蔥煎餅（동래파전）是東萊地區的代表料理，蔥與海鮮鋪在麵糊上煎成，配馬格利（막걸리）是經典吃法。這家是當地知名的蔥煎餅店。",
+  "pay": "建議：先找 ZeroPay / HIVEX 標誌，有就用全支付（免 1.5% 海外手續費）；沒有就刷信用卡，並備少量現金。",
+  "q": "동래할머니파전",
+  "hrs": "我沒查到可靠的營業時間，請在出發前用 Naver 地圖確認。"
+ },
+ "부산 동래구 우장춘로 155": {
+  "intro": "連接金剛公園與金井山一帶的纜車，可從高處看市區與山景，秋天楓葉季很適合。營運時間與停駛公告以官網為準。",
+  "pay": "建議：大型店通常刷信用卡最順，挑免海外手續費或海外回饋高的卡；刷卡機問幣別時選韓元（KRW）。結帳處若有 ZeroPay / HIVEX 標誌，也可改用全支付。",
+  "q": "금강공원 케이블카",
+  "hrs": "纜車週一固定公休（Day 2 是週五，可搭）；3–10 月平日約 09:30–17:30，各來源差 30 分鐘，以官網為準。往返約 ₩9,000–11,000／人（來源不一）。電話 051-552-1761。"
+ },
+ "부산 부산진구 동천로 121 1층": {
+  "intro": "以辣燉排骨為招牌的田浦區餐廳。營業時間與預約方式我沒查到，出發前用 Naver 地圖確認。",
+  "pay": "建議：先找 ZeroPay / HIVEX 標誌，有就用全支付（免 1.5% 海外手續費）；沒有就刷信用卡，並備少量現金。",
+  "q": "빨간돼지삼매경 갈비찜",
+  "hrs": "營業時間與公休我沒查到（搜尋結果混到其他店），請用 Naver 地圖確認。"
+ },
+ "부산 해운대구 중동2로 21 1층": {
+  "intro": "海雲台的老字號酒館式餐廳，以洪魚與章魚三合（홍어·문어삼합）、煎餅和馬格利聞名，晚上常要候位。",
+  "pay": "建議：先找 ZeroPay / HIVEX 標誌，有就用全支付（免 1.5% 海外手續費）；沒有就刷信用卡，並備少量現金。",
+  "q": "해운대 남천집",
+  "hrs": "最後點餐：週一至週六 22:45、週日 21:45。Day 2 是週五，建議最晚 22:15 前入座。"
+ },
+ "부산 영도구 흰여울길 379": {
+  "intro": "影島海岸懸崖邊的小村，沿海步道旁有白色房屋、咖啡店與海景，是釜山拍照名所，早上人少時最好走。",
+  "pay": "建議：先找 ZeroPay / HIVEX 標誌，有就用全支付（免 1.5% 海外手續費）；沒有就刷信用卡，並備少量現金。",
+  "q": "흰여울문화마을",
+  "hrs": "戶外村落，不需門票。"
+ },
+ "부산 영도구 중리남로 2-36": {
+  "intro": "介紹影島海女（해녀）潛水採海產歷史與文化的展館，附近也能吃到海產。實際開放與餐飲以現場為準。",
+  "pay": "建議：先找 ZeroPay / HIVEX 標誌，有就用全支付（免 1.5% 海外手續費）；沒有就刷信用卡，並備少量現金。",
+  "q": "영도 해녀문화전시관",
+  "hrs": "我沒查到可靠的營業時間，請在出發前用 Naver 地圖確認。"
+ },
+ "부산 영도구 대평북로 36": {
+  "intro": "影島的舊造船、修船街區，名字來自敲除船身鐵鏽的「깡깡」聲，現在有壁畫與藝術空間。行程裡標示為可略過。",
+  "pay": "建議：先找 ZeroPay / HIVEX 標誌，有就用全支付（免 1.5% 海外手續費）；沒有就刷信用卡，並備少量現金。",
+  "q": "깡깡이예술마을",
+  "hrs": "我沒查到可靠的營業時間，請在出發前用 Naver 地圖確認。"
+ },
+ "부산 영도구 해양로195번길 180": {
+  "intro": "咖啡廳兼文化空間，行程中當作下午休息點。營業時間與內容以 Naver 地圖為準。",
+  "pay": "建議：先找 ZeroPay / HIVEX 標誌，有就用全支付（免 1.5% 海外手續費）；沒有就刷信用卡，並備少量現金。",
+  "q": "P.ARK 영도",
+  "hrs": "我沒查到可靠的營業時間，請在出發前用 Naver 地圖確認。"
+ },
+ "부산 해운대구 해운대해변로 163": {
+  "intro": "以牛骨湯（곰탕）聞名的海雲台名店，常需排隊，可用 CatchTable 預約。",
+  "pay": "建議：先找 ZeroPay / HIVEX 標誌，有就用全支付（免 1.5% 海外手續費）；沒有就刷信用卡，並備少量現金。",
+  "q": "거대곰탕 해운대 본점",
+  "hrs": "07:00–21:00（最後點餐 20:30），全年無休，電話 051-731-0157。沒有午休；15:00–17:00 休息的是同集團的거대갈비，別搞混。"
+ },
+ "부산 해운대구 동백로 52": {
+  "intro": "在海雲台 The Bay 101 登船的遊艇行程，19:00 在船上看無人機秀，航程約 1 小時。",
+  "pay": "建議：已在線上付款的，現場不用再付；還沒付的話，付款前看清幣別與手續費，用海外回饋高的信用卡。",
+  "q": "더베이101 요트 드론쇼",
+  "hrs": "18:30 出航，17:30–18:00 報到；強風或下雨可能停航（官方須知）。"
+ },
+ "부산 기장군 기장읍 기장해안로 205": {
+  "intro": "坐在無動力的小車上沿軌道往下滑的斜坡車（luge），位在東釜山觀光園區，一路有海景。",
+  "pay": "建議：已在線上付款的，現場不用再付；還沒付的話，付款前看清幣別與手續費，用海外回饋高的信用卡。",
+  "q": "스카이라인 루지 부산",
+  "hrs": "全年無休；約 10:00–18:00（有資料到 18:30），入場截止為結束前 30 分；每趟約 15–20 分；免費停車；電話 051-722-6002。天氣不佳可能暫停。"
+ },
+ "부산 기장군 기장읍 기장해안로 147": {
+  "intro": "樂天 Premium Outlet 東釜山店，有品牌折扣店、美食街與超市，適合吃午餐和買伴手禮。外國旅客買東西可在結帳時詢問退稅，是否適用以店家為準。",
+  "pay": "建議：大型店先用信用卡最順（挑免海外手續費或海外回饋高的卡），刷卡機問幣別時選韓元（KRW）。樂天體系有 LINE Pay 可用的資料（含樂天折扣購物中心），但我沒查到東釜山店的個別名單，結帳前先問櫃台。LINE Pay 是綁信用卡付款，手續費看發卡銀行，回饋活動更高才划算。結帳處若有 ZeroPay / HIVEX 標誌，也可改用全支付。",
+  "q": "롯데프리미엄아울렛 동부산점",
+  "hrs": "一般營業 10:30–20:00，餐廳區 10:30–21:00（官網）；電話 1577-0001。11/01 是否有休館日請看官網。"
+ },
+ "부산 기장군 일광읍 문동리 171-1": {
+  "intro": "自己用奶油彩繪蛋糕的工作室。營業時間與價格我沒查證，請先預約。",
+  "pay": "建議：先找 ZeroPay / HIVEX 標誌，有就用全支付（免 1.5% 海外手續費）；沒有就刷信用卡，並備少量現金。",
+  "q": "에이틀리에 화실 부산기장점",
+  "hrs": "我沒查到可靠的營業時間，請在出發前用 Naver 地圖確認。"
+ },
+ "부산 수영구 광남로 97 1층": {
+  "intro": "以石板盛裝的辣燉雞（닭볶음탕）為招牌，位在廣安里一帶。",
+  "pay": "建議：先找 ZeroPay / HIVEX 標誌，有就用全支付（免 1.5% 海外手續費）；沒有就刷信用卡，並備少量現金。",
+  "q": "돌닭 광안점",
+  "hrs": "旅客資料：11:00–22:00，15:00–16:30 休息，最後點餐 21:00（未經官方確認）。"
+ },
+ "부산 수영구 광안해변로 235 3층": {
+  "intro": "廣安里海邊大樓 3 樓的咖啡廳，適合坐下來看夜景與海。營業時間未查證。",
+  "pay": "建議：先找 ZeroPay / HIVEX 標誌，有就用全支付（免 1.5% 海外手續費）；沒有就刷信用卡，並備少量現金。",
+  "q": "워킹홀리데이 광안리 카페",
+  "hrs": "我沒查到可靠的營業時間，請在出發前用 Naver 地圖確認。"
+ },
+ "부산 해운대구 해운대해변로298번길 24 1층 23호": {
+  "intro": "海雲台的鮑魚粥（전복죽）早餐店，是早餐首選。",
+  "pay": "建議：先找 ZeroPay / HIVEX 標誌，有就用全支付（免 1.5% 海外手續費）；沒有就刷信用卡，並備少量現金。",
+  "q": "원조전복죽집 해운대",
+  "hrs": "我沒查到可靠的營業時間，請在出發前用 Naver 地圖確認。"
+ },
+ "부산 해운대구 달맞이길62번길 7": {
+  "intro": "美浦一帶的鮑魚粥店，作為早餐備案。",
+  "pay": "建議：先找 ZeroPay / HIVEX 標誌，有就用全支付（免 1.5% 海外手續費）；沒有就刷信用卡，並備少量現金。",
+  "q": "바다마루 전복죽",
+  "hrs": "我沒查到可靠的營業時間，請在出發前用 Naver 地圖確認。"
+ },
+ "부산 해운대구 구남로 15 1층": {
+  "intro": "24 小時營業的豬肉湯飯（돼지국밥），是釜山代表小吃，早餐備案。",
+  "pay": "建議：先找 ZeroPay / HIVEX 標誌，有就用全支付（免 1.5% 海外手續費）；沒有就刷信用卡，並備少量現金。",
+  "q": "오복돼지국밥 해운대",
+  "hrs": "資料寫 24 小時營業（未經官方確認）。"
+ },
+ "부산 중구 광복로35번길 15": {
+  "intro": "南浦光復路一帶的眼鏡店。營業時間與是否當天可取鏡，我都沒查證，請先確認。",
+  "pay": "建議：先找 ZeroPay / HIVEX 標誌，有就用全支付（免 1.5% 海外手續費）；沒有就刷信用卡，並備少量現金。",
+  "q": null,
+  "hrs": "營業時間與公休我沒查到。Day 5 是週一，請先打電話或用 Naver 確認，並問清楚鏡片能否當天取。"
+ },
+ "부산 중구 신창동4가 국제시장": {
+  "intro": "釜山最大的傳統市場之一，賣服飾、雜貨、寢具與小吃。富平罐頭市場以罐頭與小吃攤聞名。",
+  "pay": "建議：傳統市場先找 ZeroPay / HIVEX 標誌，有就用全支付。買棉被這類大件，先問清楚能不能刷卡與價格，現金備著。",
+  "q": "국제시장 부평깡통시장",
+  "hrs": "市場週日有些店休息，週一可逛（沿用先前查到的資料，我沒逐店確認）。"
+ },
+ "부산 해운대구 센텀남대로 35": {
+  "intro": "新世界 Centum City 內的大型溫泉與汗蒸幕設施，有多種主題房。",
+  "pay": "建議：大型店通常刷信用卡最順，挑免海外手續費或海外回饋高的卡；刷卡機問幣別時選韓元（KRW）。結帳處若有 ZeroPay / HIVEX 標誌，也可改用全支付。",
+  "q": "스파랜드 센텀시티",
+  "hrs": "約 09:00–22:00，入場至 21:00（各來源略有差異）；一年約 3 天休館，日期見新世界百貨官網。入場後最多 4 小時，超時另收費。全身或雙臂雙腿大面積刺青可能限制入場，有的話先確認。"
+ },
+ "부산 수영구 광남로108번길 9 1층": {
+  "intro": "以招牌豬皮聞名的烤肉店，在 IG 上常被推薦。",
+  "pay": "建議：先找 ZeroPay / HIVEX 標誌，有就用全支付（免 1.5% 海外手續費）；沒有就刷信用卡，並備少量現金。",
+  "q": "초필살돼지구이 광안직영점",
+  "hrs": "旅客資料：每天 17:00–01:00（未經官方確認）。"
+ },
+ "부산 수영구 광남로 122 105-1호": {
+  "intro": "以招牌烤大腸（막창）為主的烤肉店，作為晚餐備案。",
+  "pay": "建議：先找 ZeroPay / HIVEX 標誌，有就用全支付（免 1.5% 海外手續費）；沒有就刷信用卡，並備少量現金。",
+  "q": "연막창 광안리점",
+  "hrs": "我沒查到可靠的營業時間，請在出發前用 Naver 地圖確認。"
+ },
+ "부산 수영구 남천바다로33번길 105": {
+  "intro": "海鮮포차（pocha），像小吃酒館吃海鮮，作為晚餐備案。",
+  "pay": "建議：先找 ZeroPay / HIVEX 標誌，有就用全支付（免 1.5% 海外手續費）；沒有就刷信用卡，並備少量現金。",
+  "q": "물보라 광안",
+  "hrs": "旅客資料：17:00–03:00（最後點餐 02:00）。"
+ }
+};
+
+
+const BOOK=[
+ {name:'機場往返計程車',day:'Day 1 · 10/29 與 Day 6 · 11/03',st:'免預約',cls:'walk',
+  note:'接機車已取消，去回程都搭計程車。去程在金海機場入境大廳外排隊或用 Kakao T / Uber，回程 07:40 前後從飯店出發，前一晚可請櫃台幫忙叫車。'},
+  {name:'빨간돼지삼매경（辣燉排骨）',hrs:"營業時間與公休我沒查到（搜尋結果混到其他店），請用 Naver 地圖確認。",day:'Day 2 · 10/30 18:00',st:'待確認',cls:'walk',
+  note:'查不到營業時間與預約方式，請用 Naver 地圖確認，必要時先預約。',
+  links:[{l:'Naver 地圖（找預約）',u:'https://map.naver.com/p/search/'+encodeURIComponent('빨간돼지삼매경 동천로 121')}]},
+ {name:'海雲台南川家 남천집（宵夜）',hrs:"最後點餐：週一至週六 22:45、週日 21:45。Day 2 是週五，建議最晚 22:15 前入座。",day:'Day 2 · 10/30 21:00',st:'可排隊登記',cls:'wait',
+  note:'晚上常要候位，可先用 Tabling（테이블링）App 排隊。最後點餐週一至週六 22:45、週日 21:45。',
+  links:[{l:'Naver 地圖（找預約）',u:'https://map.naver.com/p/search/'+encodeURIComponent('남천집 해운대')}]},
+ {name:'The Bay 101 Yacht 遊艇',hrs:"18:30 出航，17:30–18:00 報到；強風或下雨可能停航（官方須知）。",day:'Day 3 · 10/31 18:30',st:'已預約',cls:'done',
+  note:'登船前 30 分鐘到場並報預約人姓名，建議 18:00 前到。遲到很難退款或改期。',
+  links:[{l:'官方預約須知',u:'https://www.thebay101yacht.com/operationguide'}]},
+ {name:'巨大牛骨湯 冬柏本店',hrs:"07:00–21:00（最後點餐 20:30），全年無休，電話 051-731-0157。沒有午休（15:00–17:00 休息的是同集團的거대갈비）。",day:'Day 3 登船前晚餐 · Day 5 Spa Land 同棟分店備案',st:'可排隊登記',cls:'wait',
+  note:'有 CatchTable 排隊登記。外國旅客能否遠端登記以 App 當下規定為準，不行就到現場抽號。電話 051-731-0157。旅客分享最後點餐約 20:30，濃白湯可能提早賣完。',
+  links:[{l:'CatchTable 排隊／預約',u:'https://app.catchtable.co.kr/ct/shop/geodaegomtang'}]},
+ {name:'斜坡車 Skyline Luge Busan',hrs:"全年無休；約 10:00–18:00（有資料到 18:30），入場截止為結束前 30 分；電話 051-722-6002。",day:'Day 4 · 11/01 10:00',st:'建議先買票',cls:'book',
+  note:'官網與第三方平台都能線上買票。週日人多，開門前後去最順。下雨或強風可能暫停。',
+  links:[{l:'官方網站',u:'https://busan.skylineluge.kr/ko/'},{l:'Waug 購票',u:'https://www.waug.com/ko/activities/120453'}]},
+ {name:'彩繪蛋糕 Atelier 에이틀리에 화실 부산기장점',hrs:"營業時間與公休我沒查到，請先預約時一併問。",day:'Day 4 · 11/01 14:30',st:'建議預約',cls:'book',
+  note:'查不到營業時間與價格，請務必先預約並確認時段。同類體驗約 2 小時。',
+  links:[{l:'Naver 地圖（找預約）',u:'https://map.naver.com/p/search/'+encodeURIComponent('에이틀리에 화실 부산기장점')}]},
+ {name:'石板雞 돌닭 광안점',hrs:"旅客資料：11:00–22:00，15:00–16:30 休息，最後點餐 21:00。",day:'Day 4 · 11/01 18:00',st:'需預約',cls:'book',
+  note:'旅客資料：15:00–16:30 休息，最後點餐 21:00，電話 0507-1403-1289。週日傍晚人多。',
+  links:[{l:'Naver 地圖（找預約）',u:'https://map.naver.com/p/search/'+encodeURIComponent('돌닭 광안점')},{l:'Instagram',u:'https://www.instagram.com/doldak_busan'}]},
+ {name:'Working Holiday 夜景咖啡',hrs:"營業時間我沒查到，請用 Naver 地圖確認。",day:'Day 4 · 11/01 19:45',st:'待確認',cls:'walk',
+  note:'營業時間查不到，請用 Naver 地圖確認。',
+  links:[{l:'Naver 地圖（找營業時間）',u:'https://map.naver.com/p/search/'+encodeURIComponent('워킹홀리데이 광안리 광안해변로 235')}]},
+ {name:'瞳孔眼鏡店',hrs:"營業時間與公休我沒查到。Day 5 是週一，請先打電話或用 Naver 確認。",day:'Day 5 · 11/02 10:30',st:'待確認',cls:'walk',
+  note:'查不到公開資料，請用 Naver 地圖確認營業時間，並先問能否當天取件。',
+  links:[{l:'Naver 地圖（找營業時間）',u:'https://map.naver.com/p/search/'+encodeURIComponent('부산 중구 광복로35번길 15')}]},
+ {name:'초필살돼지구이 광안직영점',hrs:"旅客資料：每天 17:00–01:00（未經官方確認）。",day:'Day 5 · 11/02 18:00',st:'現場候位',cls:'wait',
+  note:'旅客資料：每天 17:00–01:00，現場候位 16:30 開放。晚餐時段要排隊。',
+  links:[{l:'Naver 地圖（找預約）',u:'https://map.naver.com/p/search/'+encodeURIComponent('초필살돼지구이 광안직영점')},{l:'Instagram',u:'https://www.instagram.com/chopilsal_official'}]},
+ {name:'연막창 광안리점（備案）',hrs:"營業時間我沒查到。",day:'Day 5 備案',st:'待確認',cls:'walk',
+  note:'地址是你提供、未查證。營業時間與預約方式請用 Naver 確認。',
+  links:[{l:'Naver 地圖（找預約）',u:'https://map.naver.com/p/search/'+encodeURIComponent('연막창 광안리점')},{l:'Instagram',u:'https://www.instagram.com/dhrtp2628'}]},
+ {name:'물보라 광안（備案）',hrs:"旅客資料：17:00–03:00（最後點餐 02:00）。",day:'Day 5 備案',st:'可預約',cls:'book',
+  note:'17:00–03:00（最後點餐 02:00），Tabling 有排隊頁，很吵。地址請核對。',
+  links:[{l:'Tabling 排隊',u:'https://www.tabling.co.kr/place/677cd44466de5f06988d1765'},{l:'Instagram',u:'https://www.instagram.com/nnoolbora'}]},
+ {name:'其他景點與餐廳',hrs:"梵魚寺 08:00–17:00（免費）；金剛纜車週一公休；SPA LAND 約 09:00–22:00；樂天 outlet 10:30–20:00。",day:'梵魚寺、金剛纜車、東萊煎餅、國際市場、Spa Land 等',st:'現場即可',cls:'walk',
+  note:'目前沒查到強制預約，現場購票或候位。Spa Land 週末人多，想省時可先看有沒有線上購票。'}
+];
+/* ================= helpers ================= */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const plain=h=>String(h||'').replace(/<[^>]*>/g,'').replace(/&amp;/g,'&');
+const gmap=a=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(a);
+const nmap=a=>'https://map.naver.com/p/search/'+encodeURIComponent(a);
+const store={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+let toastTimer;
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2000);}
+async function copyText(t){
+  try{ if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(t);return true;} }catch(e){}
+  try{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;top:0;left:0;opacity:0';document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,t.length);const ok=document.execCommand('copy');document.body.removeChild(ta);return ok;}catch(e){return false;}
+}
+async function doCopy(text,btn){
+  const ok=await copyText(text);toast(ok?'已複製':'複製失敗，請長按文字手動複製');
+  if(ok&&btn&&btn.classList&&btn.classList.contains('btn')){const old=btn.textContent;btn.textContent='已複製 ✓';btn.classList.add('done');setTimeout(()=>{btn.textContent=old;btn.classList.remove('done');},1500);}
+}
+const LEAF=(c)=>'<svg viewBox="0 0 100 100" aria-hidden="true"'+(c?' class="'+c+'"':'')+'><use href="#leaf" xlink:href="#leaf"/></svg>';
+function mascot(cls){
+  return '<svg viewBox="0 0 100 100" class="'+(cls||'')+'" aria-hidden="true"><use href="#leaf" xlink:href="#leaf" style="color:#FF8A2B"/>'
+  +'<circle cx="41" cy="54" r="4.2" fill="#3A2748"/><circle cx="59" cy="54" r="4.2" fill="#3A2748"/><circle cx="42.4" cy="52.6" r="1.4" fill="#fff"/><circle cx="60.4" cy="52.6" r="1.4" fill="#fff"/>'
+  +'<path d="M43 62 Q50 70 57 62" fill="none" stroke="#3A2748" stroke-width="3" stroke-linecap="round"/>'
+  +'<circle cx="34" cy="61" r="4.5" fill="#FF8FA3" opacity=".85"/><circle cx="66" cy="61" r="4.5" fill="#FF8FA3" opacity=".85"/></svg>';
+}
+const CHEV='<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="#3A2748" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const CHECKSVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+/* ================= trip helpers ================= */
+const dMD=d=>{const m=d.date.match(/(\d+)\s*\/\s*(\d+)/);return {m:+m[1],d:+m[2]};};
+const dWD=d=>{const m=d.date.match(/（(.)）/);return m?m[1]:'';};
+const chipDate=d=>{const x=dMD(d);return x.m+'/'+x.d;};
+const startMin=t=>{const m=String(t).match(/(\d{1,2}):(\d{2})/);return m?(+m[1])*60+(+m[2]):null;};
+function todayInfo(){
+  const now=new Date();
+  const t0=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const start=new Date(2026,9,29),end=new Date(2026,10,3);
+  if(t0<start)return {mode:'before',days:Math.round((start-t0)/864e5)};
+  if(t0>end)return {mode:'after'};
+  const di=DAYS.findIndex(d=>{const x=dMD(d);return x.m===t0.getMonth()+1&&x.d===t0.getDate();});
+  if(di<0)return {mode:'before',days:0};
+  const mins=now.getHours()*60+now.getMinutes();
+  let idx=-1,first=-1;
+  DAYS[di].stops.forEach((s,i)=>{const t=startMin(s.time);if(t===null)return;if(first<0)first=i;if(t<=mins)idx=i;});
+  if(idx<0)idx=first<0?0:first;
+  let nxt=-1;for(let i=idx+1;i<DAYS[di].stops.length;i++){const s=DAYS[di].stops[i];if(s.addr&&s.type!=='info'){nxt=i;break;}}
+  return {mode:'during',di:di,si:idx,next:nxt};
+}
+
+/* ================= state ================= */
+const ui=store.get('busan-ui',{});
+const state={tab:'today',day:ui.day||0,tool:ui.tool||'budget',bk:'all',q:'',open:null,done:store.get('busan-done',[])};
+if(state.day>=DAYS.length)state.day=0;
+function persist(){store.set('busan-ui',{tab:state.tab,day:state.day,tool:state.tool});}
+const ckDone=()=>store.get('busan-check-v2',[]);
+
+/* ================= stop card ================= */
+function stopHTML(di,si,o){
+  o=o||{};const d=DAYS[di],s=d.stops[si],key=d.n+'.'+si;
+  if(s.type==='info'){
+    return '<li class="st"><span class="node"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><circle cx="12" cy="12" r="6" fill="#fff" stroke="#3A2748" stroke-width="3.5"/></svg></span><div class="infostop"><b class="tm2">'+esc(s.time)+'</b>　'+s.name+(s.tip?'<div class="fine">'+s.tip+'</div>':'')+'</div></li>';
+  }
+  const inf=s.addr&&INFO[s.addr.ko];
+  const done=state.done.indexOf(key)>=0;
+  const hasBody=!!(s.addr||s.tip||inf);
+  let h='<li class="st'+(done?' done':'')+(o.now?' nowst':'')+'" data-key="'+key+'" id="stop-'+di+'-'+si+'"><span class="node">'+LEAF()+'</span>';
+  const head='<span class="tm">'+esc(s.time)+'</span>'+(o.now?'<span class="badge" style="background:var(--maple);color:#fff">現在</span>':'')
+    +'<span class="nm">'+(s.star?'<span class="star">★</span> ':'')+s.name+(s.badge?'<span class="badge">'+esc(s.badge)+'</span>':'')+'</span>'
+    +'<span class="one">'+esc(inf?inf.intro:plain(s.tip).slice(0,44))+'</span>';
+  const donebtn='<button class="donebtn" data-act="done" data-k="'+key+'" aria-label="標記已完成" aria-pressed="'+done+'">'+CHECKSVG+'已完成</button>';
+  if(!hasBody){return h+'<div class="stop"><div style="padding:10px 14px;position:relative">'+head+donebtn+'</div></div></li>';}
+  let b='<div class="body">';
+  if(s.addr){
+    b+='<div class="addr"><div class="addr-ko">'+esc(s.addr.ko)+'</div><div class="addr-en">'+esc(s.addr.en)+'</div></div><div class="actions">';
+    b+=(s.links||[]).map(l=>'<a class="btn btn-book" target="_blank" rel="noopener" href="'+l.u+'">'+l.l+'</a>').join('');
+    b+='<button class="btn btn-main" data-act="show" data-d="'+di+'" data-s="'+si+'">給司機看</button>'
+      +'<button class="btn" data-act="copy" data-t="'+encodeURIComponent(s.addr.ko)+'">複製地址</button>'
+      +'<a class="btn" target="_blank" rel="noopener" href="'+gmap(s.addr.ko)+'">Google 地圖</a>'
+      +'<a class="btn" target="_blank" rel="noopener" href="'+nmap(s.addr.ko)+'">Naver 地圖</a>'
+      +(inf&&inf.q?'<a class="btn" target="_blank" rel="noopener" href="https://www.google.com/search?tbm=isch&q='+encodeURIComponent(inf.q)+'">看實景照片</a>':'')
+      +'</div>';
+  }
+  if(inf){b+='<p class="intro">'+inf.intro+'</p>'+(inf.hrs?'<p class="hrs"><b>營業</b>　'+inf.hrs+'</p>':'')+'<p class="pay"><b>付款</b>　'+inf.pay+'</p>';}
+  if(s.tip)b+='<p class="tip'+(s.warn?' warn':'')+'">'+s.tip+'</p>';
+  b+='</div>';
+  const open=(o.open||state.open===key)?' open':'';
+  return h+'<details class="stop"'+open+' data-key="'+key+'"><summary>'+head+CHEV+donebtn+'</summary>'+b+'</details></li>';
+}
+function extrasHTML(d){
+  let h='';
+  if(d.brief)h+='<div class="brief"><b>今日速覽</b><ul>'+d.brief.map(x=>'<li>'+x+'</li>').join('')+'</ul></div>';
+  return h;
+}
+function afterHTML(d){
+  let h='';
+  if(d.checks)h+='<div class="checks"><b>硬性檢查點</b><ul>'+d.checks.map(x=>'<li>'+x+'</li>').join('')+'</ul></div>';
+  if(d.backup)h+='<div class="backup"><b>雨天／停航備案</b>　'+d.backup+'</div>';
+  return h;
+}
+
+/* ================= today ================= */
+function checksProgress(){const n=CHECK.length,k=ckDone().filter(i=>i<n).length;return {n:n,k:k};}
+function falls(){
+  const xs=[8,22,38,52,66,78,90,30],cols=['#FF8A2B','#FFD43B','#E9442F','#FF8A2B','#FFD43B','#E9442F','#FF8A2B','#FFD43B'];
+  return xs.map((x,i)=>'<span class="fall" style="left:'+x+'%;--dx:'+((i%2?1:-1)*(20+i*4))+'px;--rot:'+(200+i*40)+'deg;animation-delay:'+(i*0.45)+'s;color:'+cols[i]+'">'+LEAF()+'</span>').join('');
+}
+function renderToday(){
+  const ti=todayInfo(),el=$('#t-today');let h='';
+  if(ti.mode==='before'){
+    const p=checksProgress();
+    h+='<div class="hero">'+falls()+'<h1>釜山楓遊<br>快出發囉！</h1><div class="cd"><span>還有</span><b>'+ti.days+'</b><span>天</span></div><p>10/29（四）–11/03（二）　3 人</p>'+mascot('mas')+'</div>';
+    h+='<div class="sect">'+LEAF()+'出發前待辦　'+p.k+'/'+p.n+'</div><div class="prog" aria-label="待辦進度"><i style="width:'+(p.n?Math.round(p.k/p.n*100):0)+'%"></i></div>';
+    const saved=ckDone(),todo=CHECK.map((t,i)=>({t:t,i:i})).filter(x=>saved.indexOf(x.i)<0).slice(0,4);
+    h+='<ul class="chk" style="margin-top:12px">'+(todo.length?todo.map(x=>'<li><label><input type="checkbox" data-ck="'+x.i+'"><span>'+esc(x.t)+'</span></label></li>').join(''):'<li class="fine">待辦都完成了，太棒了！</li>')+'</ul>';
+    h+='<div class="actions"><button class="btn btn-main" data-act="tab" data-tab="plan" data-i="0">看 Day 1 行程</button><button class="btn" data-act="tab" data-tab="info">全部待辦</button></div>';
+    h+='<div class="sect">'+LEAF()+'出發前先看</div><div class="actions"><button class="btn" data-act="tool" data-tool="pay">付款怎麼選</button><button class="btn" data-act="tool" data-tool="tax">退稅</button><button class="btn" data-act="tool" data-tool="phrase">常用韓文</button><button class="btn" data-act="tool" data-tool="budget">預算</button></div>';
+  }else if(ti.mode==='after'){
+    h+='<div class="hero"><h1>旅程結束<br>歡迎回家！</h1><p>謝謝這趟好玩的釜山楓遊。</p>'+mascot('mas')+'</div><div class="actions"><button class="btn" data-act="tab" data-tab="plan" data-i="0">回顧行程</button></div>';
+  }else{
+    const d=DAYS[ti.di];
+    h+='<div class="hero">'+falls()+'<h1>Day '+d.n+'　'+chipDate(d)+'（'+dWD(d)+'）</h1><p>'+d.title+'</p>'+mascot('mas')+'</div>';
+    h+='<div class="sect">'+LEAF()+'現在</div><ol class="tl">'+stopHTML(ti.di,ti.si,{now:true,open:true})+'</ol>';
+    if(ti.next>=0)h+='<div class="sect">'+LEAF()+'下一站</div><ol class="tl">'+stopHTML(ti.di,ti.next,{})+'</ol>';
+    h+=extrasHTML(d)+afterHTML(d);
+    h+='<div class="actions"><button class="btn btn-main" data-act="tab" data-tab="plan" data-i="'+ti.di+'">看整天行程</button></div>';
+  }
+  el.innerHTML=h;
+}
+
+/* ================= plan ================= */
+function searchStops(q){
+  q=q.trim().toLowerCase();if(!q)return [];
+  const out=[];
+  DAYS.forEach((d,di)=>d.stops.forEach((s,si)=>{
+    const inf=s.addr&&INFO[s.addr.ko];
+    const txt=(plain(s.name)+' '+(s.ko||'')+' '+(s.addr?s.addr.ko+' '+s.addr.en:'')+' '+plain(s.tip)+' '+(inf?inf.intro+' '+inf.q:'')).toLowerCase();
+    if(txt.indexOf(q)>=0)out.push({di:di,si:si});
+  }));
+  return out;
+}
+function renderPlan(){
+  const ti=todayInfo();
+  let h='';
+  h+='<div class="search"><input id="q" type="search" placeholder="搜尋店名、中文或韓文" value="'+esc(state.q)+'" aria-label="搜尋行程"></div>';
+  if(state.q.trim()){
+    const r=searchStops(state.q);
+    h+='<ul class="res">'+(r.length?r.map(x=>{const d=DAYS[x.di],s=d.stops[x.si];return '<li><button data-act="goto" data-d="'+x.di+'" data-s="'+x.si+'">'+plain(s.name)+'<small>Day '+d.n+'　'+chipDate(d)+'　'+esc(s.time)+'</small></button></li>';}).join(''):'<li class="fine">找不到相符的地點，換個關鍵字試試。</li>')+'</ul>';
+    $('#t-plan').innerHTML=h;focusQ();return;
+  }
+  h+='<div class="chips" role="tablist" aria-label="選擇日期">'+DAYS.map((x,i)=>'<button class="chip'+(i===state.day?' on':'')+'" role="tab" aria-selected="'+(i===state.day)+'" data-act="day" data-i="'+i+'">'+chipDate(x)+'<small>'+dWD(x)+'</small></button>').join('')+'</div>';
+  const d=DAYS[state.day];
+  h+='<div class="dayhead"><span class="tag '+d.tag[0]+'">'+d.tag[1]+'</span><h2>Day '+d.n+'　'+d.title+'</h2><div class="wear"><b>今日穿搭</b>　'+d.wear+'</div></div>';
+  h+=extrasHTML(d);
+  h+='<ol class="tl">'+d.stops.map((s,si)=>stopHTML(state.day,si,{now:ti.mode==='during'&&ti.di===state.day&&ti.si===si})).join('')+'</ol>';
+  h+=afterHTML(d);
+  h+='<div class="actions"><button class="btn" data-act="copyday" data-d="'+state.day+'">複製當天全部地址</button></div>';
+  $('#t-plan').innerHTML=h;focusQ();
+}
+function focusQ(){const q=$('#q');if(q&&state._refocus){q.focus();try{q.setSelectionRange(q.value.length,q.value.length);}catch(e){}}}
+
+/* ================= booking ================= */
+function renderBook(){
+  const chips=['all'].concat(DAYS.map((d,i)=>i));
+  let h='<h2 class="h">預約與排隊</h2><p class="lead">需要預約或排隊的店與設施都在這裡。</p>';
+  h+='<div class="seg">'+chips.map(c=>'<button class="chip sm'+(state.bk===c?' on':'')+'" data-act="bk" data-v="'+c+'">'+(c==='all'?'全部':'Day '+DAYS[c].n)+'</button>').join('')+'</div>';
+  const list=BOOK.filter(b=>{
+    if(state.bk==='all')return true;
+    const ds=(b.day.match(/Day\s*(\d)/g)||[]).map(x=>+x.replace(/\D/g,''));
+    return ds.indexOf(DAYS[state.bk].n)>=0;
+  });
+  h+=list.length?list.map(b=>'<div class="bk"><div class="bk-top"><div class="bk-name">'+b.name+'</div><span class="bk-st st-'+b.cls+'">'+b.st+'</span></div><div class="bk-day">'+b.day+'</div><p class="bk-note">'+b.note+'</p>'+(b.hrs?'<p class="bk-note"><b>營業／公休</b>　'+b.hrs+'</p>':'')+(b.links?'<div class="actions">'+b.links.map(l=>'<a class="btn btn-book" target="_blank" rel="noopener" href="'+l.u+'">'+l.l+'</a>').join('')+'</div>':'')+'</div>').join(''):'<p class="fine">這一天沒有需要預約的項目。</p>';
+  $('#t-book').innerHTML=h;
+}
+
+/* ================= tools / info (static html + wiring) ================= */
+function setTool(t){
+  state.tool=t;
+  $$('.tp').forEach(p=>{p.hidden=p.id!=='tp-'+t;});
+  $$('[data-act="tool"].chip').forEach(b=>b.classList.toggle('on',b.dataset.tool===t));
+}
+function renderChecks(){
+  const saved=ckDone();
+  $('#chk').innerHTML=CHECK.map((t,i)=>'<li><label><input type="checkbox" data-ck="'+i+'"'+(saved.indexOf(i)>=0?' checked':'')+'><span>'+esc(t)+'</span></label></li>').join('');
+  const p=checksProgress();
+  $$('.prog i').forEach(i=>{i.style.width=(p.n?Math.round(p.k/p.n*100):0)+'%';});
+  $$('.ptxt').forEach(x=>{x.textContent=p.k+'/'+p.n;});
+}
+
+/* ================= navigation ================= */
+function go(tab,o){
+  o=o||{};
+  if(o.day!=null)state.day=o.day;
+  state.tab=tab;
+  $$('.tab').forEach(t=>t.classList.toggle('on',t.id==='t-'+tab));
+  $$('.tb').forEach(b=>{if(b.dataset.tab===tab)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+  if(tab==='today')renderToday();
+  if(tab==='plan'){if(o.day!=null)state.q='';renderPlan();}
+  if(tab==='book')renderBook();
+  if(tab==='tools')setTool(o.tool||state.tool);
+  if(tab==='info')renderChecks();
+  persist();
+  if(!o.silent){try{history.pushState({tab:tab,day:state.day},'','#'+tab+(tab==='plan'?'-'+(state.day+1):''));}catch(e){}}
+  if(o.focus!=null){
+    const key=DAYS[state.day].n+'.'+o.focus;state.open=key;renderPlan();
+    const el=document.getElementById('stop-'+state.day+'-'+o.focus);
+    if(el){const dt=el.querySelector('details');if(dt)dt.open=true;try{el.scrollIntoView({block:'center'});}catch(e){el.scrollIntoView();}}
+  }else{try{window.scrollTo(0,0);}catch(e){}const top=$('#top');if(top&&top.scrollIntoView){try{top.scrollIntoView();}catch(e){}}}
+}
+window.addEventListener('popstate',e=>{const st=e.state;if(st&&st.tab)go(st.tab,{day:st.day,silent:true});});
+
+/* ================= sheets ================= */
+let curAddr='',ldUrl='';
+function openDriver(di,si){
+  const s=DAYS[di].stops[si];curAddr=s.addr.ko;
+  $('#d-nm').textContent=s.ko||'';$('#d-nm').style.display=s.ko?'block':'none';
+  $('#d-ad').textContent=s.addr.ko;$('#d-en').textContent=s.addr.en;$('#d-zh').innerHTML=s.name;
+  $('#driver').classList.add('open');document.body.style.overflow='hidden';
+}
+function closeDriver(){$('#driver').classList.remove('open');document.body.style.overflow='';}
+function openSheet(id){$('#'+id).classList.add('open');document.body.style.overflow='hidden';}
+function closeSheet(id){$('#'+id).classList.remove('open');document.body.style.overflow='';}
+function openExternal(url){let w=null;try{w=window.open(url,'_blank');}catch(e){}if(w){try{w.opener=null;}catch(e){}return;}showLinkDialog(url);}
+function showLinkDialog(url){ldUrl=url;$('#ld-url').textContent=url;$('#ld-link').href=url;$('#ld').classList.add('open');}
+function closeLinkDialog(){$('#ld').classList.remove('open');}
+function speakKo(text,rate){
+  if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined'){toast('這支手機不支援語音，請直接把螢幕給店員看');return;}
+  try{
+    const synth=window.speechSynthesis;synth.cancel();
+    const u=new SpeechSynthesisUtterance(text);u.lang='ko-KR';u.rate=rate||0.9;
+    const vs=synth.getVoices();const ko=vs.find(v=>v.lang&&v.lang.replace('_','-').toLowerCase().indexOf('ko')===0);
+    if(ko)u.voice=ko;else if(vs.length)toast('找不到韓文語音，請到手機設定下載韓文語音，或把螢幕給店員看');
+    u.onerror=()=>toast('語音播放失敗，請直接把螢幕給店員看');synth.speak(u);
+  }catch(e){toast('語音播放失敗，請直接把螢幕給店員看');}
+}
+if('speechSynthesis' in window){try{window.speechSynthesis.getVoices();}catch(e){}}
+
+/* ================= events ================= */
+document.addEventListener('click',e=>{
+  const ext=e.target.closest('a[href^="http"]');
+  if(ext&&!ext.closest('#ld')){e.preventDefault();openExternal(ext.href);return;}
+  const b=e.target.closest('[data-act]');
+  if(b){
+    const a=b.dataset.act;
+    if(a==='done'){
+      e.preventDefault();e.stopPropagation();
+      const k=b.dataset.k,i=state.done.indexOf(k);
+      if(i>=0)state.done.splice(i,1);else state.done.push(k);
+      store.set('busan-done',state.done);
+      const li=b.closest('.st');if(li)li.classList.toggle('done',state.done.indexOf(k)>=0);
+      b.setAttribute('aria-pressed',String(state.done.indexOf(k)>=0));
+      toast(state.done.indexOf(k)>=0?'已完成這一站 ✓':'已取消');
+    }
+    else if(a==='copy')doCopy(decodeURIComponent(b.dataset.t),b);
+    else if(a==='show')openDriver(+b.dataset.d,+b.dataset.s);
+    else if(a==='speak')speakKo(b.dataset.t,parseFloat(b.dataset.r)||0.9);
+    else if(a==='copyday'){const d=DAYS[+b.dataset.d];const lines=d.stops.filter(s=>s.addr&&s.type!=='info').map(s=>s.time+' '+plain(s.name)+'\n'+s.addr.ko);doCopy('Day '+d.n+'　'+d.date+'\n'+lines.join('\n\n'),b);}
+    else if(a==='tab'){state.q='';go(b.dataset.tab,b.dataset.i!=null?{day:+b.dataset.i}:{});}
+    else if(a==='day'){state.day=+b.dataset.i;state.q='';state.open=null;renderPlan();persist();try{history.replaceState({tab:'plan',day:state.day},'','#plan-'+(state.day+1));}catch(x){}}
+    else if(a==='bk'){state.bk=b.dataset.v==='all'?'all':+b.dataset.v;renderBook();}
+    else if(a==='tool'){go('tools',{tool:b.dataset.tool});}
+    else if(a==='goto'){state.q='';go('plan',{day:+b.dataset.d,focus:+b.dataset.s});}
+    else if(a==='sos')openSheet('sos');
+    else if(a==='closesheet')closeSheet(b.dataset.id);
+    return;
+  }
+  const tb=e.target.closest('.tb');
+  if(tb){state.q='';go(tb.dataset.tab);return;}
+  if(e.target.classList&&e.target.classList.contains('sheet'))closeSheet(e.target.id);
+  if(e.target.id==='ld')closeLinkDialog();
+});
+document.addEventListener('input',e=>{
+  if(e.target.id==='q'){state.q=e.target.value;state._refocus=true;renderPlan();}
+  if(e.target.id==='phq'){const q=e.target.value.trim().toLowerCase();$$('#tp-phrase .ph').forEach(p=>{p.style.display=!q||p.textContent.toLowerCase().indexOf(q)>=0?'':'none';});}
+});
+document.addEventListener('change',e=>{
+  const c=e.target.closest('[data-ck]');if(!c)return;
+  const i=+c.dataset.ck;let saved=ckDone();
+  if(c.checked){if(saved.indexOf(i)<0)saved.push(i);}else saved=saved.filter(x=>x!==i);
+  store.set('busan-check-v2',saved);renderChecks();if(state.tab==='today')renderToday();
+});
+document.addEventListener('toggle',e=>{const d=e.target;if(d&&d.classList&&d.classList.contains('stop')){const k=d.dataset.key;if(d.open)state.open=k;else if(state.open===k)state.open=null;}},true);
+$('#d-close').addEventListener('click',closeDriver);
+$('#d-copy').addEventListener('click',e=>doCopy(curAddr,e.currentTarget));
+$('#ld-close').addEventListener('click',closeLinkDialog);
+$('#ld-copy').addEventListener('click',e=>doCopy(ldUrl,e.currentTarget));
+$('#ld-top').addEventListener('click',()=>{try{window.top.location.href=ldUrl;}catch(e){}setTimeout(()=>{if(!document.hidden)toast('仍然無法開啟，請改用複製連結，或長按下方連結');},900);});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDriver();closeLinkDialog();closeSheet('sos');}});
+
+/* ================= budget & converter ================= */
+(function(){
+  const rows=[['遊艇賞無人機秀（已預約，3 人合計）',147000,147000],['機場計程車 ×2（去程＋回程）',50000,84000],['金剛纜車往返 ×3',27000,33000],['斜坡車 ×3（依搭乘回數）',84000,111000],['SPA LAND 入場 ×3',51000,78000]];
+  const fmt=n=>n.toLocaleString('en-US');
+  let lo=0,hi=0;rows.forEach(r=>{lo+=r[1];hi+=r[2];});
+  const rateEl=$('#rate'),krwEl=$('#krw'),twdinEl=$('#twdin');
+  if(!rateEl)return;
+  function rate(){const v=parseFloat(rateEl.value);return v>0?v:0;}
+  function draw(){
+    const r=rate();const t=n=>r?'約 '+fmt(Math.round(n*r)):'—';
+    let h='<tr><th>項目</th><th class="num">韓元（₩）</th><th class="num">台幣</th></tr>';
+    rows.forEach(x=>{h+='<tr><td>'+x[0]+'</td><td class="num">'+(x[1]===x[2]?fmt(x[1]):fmt(x[1])+' – '+fmt(x[2]))+'</td><td class="num">'+(r?(x[1]===x[2]?t(x[1]):t(x[1])+' – '+fmt(Math.round(x[2]*r))):'—')+'</td></tr>';});
+    h+='<tr><th>合計</th><th class="num">'+fmt(lo)+' – '+fmt(hi)+'</th><th class="num">'+(r?'約 '+fmt(Math.round(lo*r))+' – '+fmt(Math.round(hi*r)):'—')+'</th></tr>';
+    $('#bt').innerHTML=h;
+    const k=parseFloat((krwEl.value||'').replace(/,/g,''));$('#twd').textContent=(r&&k>=0)?fmt(Math.round(k*r)):'—';
+    const w=parseFloat((twdinEl.value||'').replace(/,/g,''));$('#krwout').textContent=(r&&w>=0)?fmt(Math.round(w/r)):'—';
+  }
+  try{const sv=localStorage.getItem('busan-rate');if(sv)rateEl.value=sv;}catch(e){}
+  [rateEl,krwEl,twdinEl].forEach(el=>el.addEventListener('input',()=>{if(el===rateEl){try{localStorage.setItem('busan-rate',rateEl.value);}catch(e){}}draw();}));
+  draw();
+})();
+
+/* ================= boot ================= */
+(function(){
+  const m=(location.hash||'').match(/^#(today|plan|book|tools|info)(?:-(\d))?$/);
+  const ti=todayInfo();
+  let tab,day=state.day;
+  if(m){tab=m[1];if(m[2])day=Math.min(Math.max(+m[2]-1,0),DAYS.length-1);}
+  else if(ti.mode==='during'){tab='today';}
+  else{tab=ui.tab||'today';}
+  try{history.replaceState({tab:tab,day:day},'','#'+tab+(tab==='plan'?'-'+(day+1):''));}catch(e){}
+  go(tab,{day:day,silent:true});
+})();
+
+</script>
+</body>
+</html>
