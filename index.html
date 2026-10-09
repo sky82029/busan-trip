@@ -232,6 +232,31 @@ h3{margin:0 0 6px;font-size:17px;font-weight:800}
 .empty{text-align:center;padding:24px 10px}
 .empty svg{width:120px;height:120px}
 
+/* v3 additions */
+.note{background:#fff;border:3px solid var(--ink);border-radius:16px;box-shadow:var(--shadow);padding:10px 14px;margin:12px 0;font-size:14px}
+.note.warnbox{background:#FFE7D1}
+.note .actions{margin:8px 0 0}
+.rowc{background:#fff;border:3px solid var(--ink);border-radius:16px;padding:8px 10px;margin:0 0 10px;box-shadow:var(--shadow)}
+.rc1,.rc2{display:flex;gap:6px;align-items:center;margin:0 0 6px}
+.rowc input{flex:1;min-width:0;font:600 14px var(--tc);color:var(--ink);padding:8px 10px;border:2.5px solid var(--ink);border-radius:10px;background:var(--sky-2)}
+.rowc input.kr{font-family:var(--kr)}
+.rc2 input:nth-child(2){max-width:6em}.rc2 input:nth-child(3){max-width:4.5em}
+.rowc .btn{min-height:38px;padding:0 10px;box-shadow:0 3px 0 var(--ink)}
+.sumbox{background:var(--sun);border:3px solid var(--ink);border-radius:18px;box-shadow:var(--shadow);padding:12px 16px;margin:12px 0;font-size:14.5px}
+.sumbig{font-size:21px;font-weight:800;margin-bottom:4px}
+.ol{font-family:var(--kr);font-size:clamp(24px,7vw,34px);line-height:1.4;margin:4px 0;color:var(--ink)}
+.ol-say{font-family:var(--kr);font-size:clamp(22px,6vw,28px);margin:14px 0 4px;color:var(--maple)}
+.rowc.u{border-color:var(--maple)}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 2px}
+.thumb{position:relative;width:76px;height:76px;border:3px solid var(--ink);border-radius:12px;overflow:hidden;background:var(--sky-2)}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb button{position:absolute;top:2px;right:2px;width:26px;height:26px;border:2px solid var(--ink);border-radius:50%;background:#fff;color:var(--ink);font:800 16px/1 var(--tc);cursor:pointer;padding:0}
+.rowc select{font:700 14px var(--tc);color:var(--ink);padding:7px 6px;border:2.5px solid var(--ink);border-radius:10px;background:var(--sky-2);max-width:5em}
+.rc2 select{flex:none}
+.cmp{margin:6px 0 2px;font-size:13px;line-height:1.7}
+textarea#ai-paste{width:100%;font:500 13px var(--tc);color:var(--ink);padding:8px 10px;border:2.5px solid var(--ink);border-radius:12px;background:var(--sky-2);margin-top:8px}
+.steps{margin:6px 0 0;padding-left:1.2em;font-size:14px}.steps li{margin:.3em 0}
+
 </style>
 </head>
 <body>
@@ -253,15 +278,25 @@ h3{margin:0 0 6px;font-size:17px;font-weight:800}
   <section class="tab" id="t-book"></section>
   <section class="tab" id="t-tools">
     <h2 class="h">工具箱</h2>
-    <div class="seg"><button class="chip sm" data-act="tool" data-tool="budget">預算換算</button><button class="chip sm" data-act="tool" data-tool="tax">退稅</button><button class="chip sm" data-act="tool" data-tool="pay">付款</button><button class="chip sm" data-act="tool" data-tool="phrase">常用韓文</button></div>
+    <details class="acc" open><summary><span>匯率設定</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="#3A2748" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></summary><div class="in">
+      <div class="note" id="rate-status" style="margin:0 0 10px"></div>
+      <p class="fine">不填就使用自動匯率。換匯後想用 WOWPASS 機台或 App 上的實際數字，就在下面手動輸入，手動輸入優先，並記在手機裡。</p>
+      <div class="cv-row">1 台幣 ＝ <input id="r-wow" inputmode="decimal" placeholder="自動" style="width:9em"> 韓元（WOWPASS）</div>
+      <div class="cv-row">1 台幣 ＝ <input id="r-card" inputmode="decimal" placeholder="自動（選填）" style="width:9em"> 韓元（刷卡）</div>
+      <div class="cv-row">刷卡海外手續費 <input id="r-fee" inputmode="decimal" placeholder="例如 1.5" style="width:6em"> %（選填）</div>
+      <div class="actions"><button class="btn" data-act="ratereset">清除手動，改用自動</button><button class="btn" id="rate-refresh" data-act="raterefresh" hidden>更新匯率</button></div>
+      <p class="fine" id="rate-attr"></p>
+    </div></details>
+    <div class="seg"><button class="chip sm" data-act="tool" data-tool="budget">預算換算</button><button class="chip sm" data-act="tool" data-tool="snap">拍照翻譯</button><button class="chip sm" data-act="tool" data-tool="bag">行李</button><button class="chip sm" data-act="tool" data-tool="tax">退稅</button><button class="chip sm" data-act="tool" data-tool="pay">付款</button><button class="chip sm" data-act="tool" data-tool="phrase">常用韓文</button></div>
     <div class="tp" id="tp-budget"><p class="lead">只列我查到價格的項目。各網站價格有出入，所以給區間，3 人合計。</p>
-    <div class="tbl"><table id="bt"></table></div>
-    <p class="lead" style="margin-top:10px">未計入：市內計程車（叫車前看 Kakao T 的預估價）、所有餐費、彩繪蛋糕、伴手禮、棉被與眼鏡。</p>
-    <div class="conv">
-      <div>匯率請自己填（以出發前的銀行或 App 為準）：1 韓元 ＝ <input id="rate" inputmode="decimal" placeholder="例如 0.022"> 台幣</div>
-      <div class="cv-row"><input id="krw" inputmode="numeric" placeholder="輸入韓元"> ₩ ≈ <b id="twd">—</b> 台幣</div>
-      <div class="cv-row"><input id="twdin" inputmode="numeric" placeholder="輸入台幣"> 台幣 ≈ <b id="krwout">—</b> ₩</div>
-    </div></div>
+      <div class="tbl"><table id="bt"></table></div>
+      <p class="lead" style="margin-top:10px">未計入：市內計程車（叫車前看 Kakao T 的預估價）、所有餐費、彩繪蛋糕、伴手禮、棉被與眼鏡。</p>
+      <div class="conv">
+        <div class="cv-row"><input id="krw" inputmode="numeric" placeholder="輸入韓元"> ₩ ≈ <b id="twd">—</b> 台幣</div>
+        <div class="cv-row"><input id="twdin" inputmode="numeric" placeholder="輸入台幣"> 台幣 ≈ <b id="krwout">—</b> ₩</div>
+      </div></div>
+    <div class="tp" id="tp-snap" hidden><p class="lead">拍菜單或商品，翻譯後把價格填進來，自動換算台幣。</p><div id="snap-root"></div></div>
+    <div class="tp" id="tp-bag" hidden><div id="bag-root"></div></div>
     <div class="tp" id="tp-tax" hidden><p class="lead">整理自旅遊網站與店家頁面，不是官方公告，現場以店員與機場櫃台說明為準。</p><div class="pcard">
       <ul>
         <li>先看店門口有沒有 Tax Free 或即時退稅標誌，<b>結帳前拿出護照</b>。</li>
@@ -343,7 +378,17 @@ h3{margin:0 0 6px;font-size:17px;font-weight:800}
           <li>護照效期建議 <b>6 個月以上</b>（持台灣護照免簽）</li>
           <li><b>K-ETA</b>：台灣護照 2026/12/31 前免申請，你們這趟在免除期內</li>
           <li><b>電子入境卡</b>：抵達當天與前 2 天可填（10/27–10/29，韓國時間），免費，填完截圖存手機。<a href="https://www.e-arrivalcard.go.kr/" target="_blank" rel="noopener">官方填寫網站</a>支援中文，也有多人一起申報的選項</li>
-          <li>填寫時留意出發地的國名顯示；外交部曾對此發布提醒，以官方最新說明為準</li>
+          <li>填寫時留意出發地的國名顯示；外交部曾對此發布提醒，以官方最新說明為準。有報導指外交部在 2026 年 3 月建議當時並行的紙本填寫，我查不到 10 月的現況，出發前請看外交部公告</li>
+          <li>各來源對「抵達前 3 天」的算法不同，<b>10/27 到 10/29 之間填</b>最保險</li>
+        </ul></div></details>
+<details class="acc"><summary><span>容易漏掉的事</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="#3A2748" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></summary><div class="in"><ul>
+          <li><b>時差</b>：韓國比台灣快 1 小時。落地後確認手機切到韓國時間</li>
+          <li><b>天黑得早</b>：10/29–11/3 日落約 17:28–17:33，戶外景點 17:00 前收尾，梵魚寺 17:00 關門</li>
+          <li><b>藥品與禁帶品</b>：日本 EVE 止痛藥因含受管制成分被韓國禁止入境，新鮮蔬果與植物也不能帶。行動電源與暖暖包 2026 年有新規定，我沒讀到細節，請看航空公司與韓國公告</li>
+          <li><b>週末人潮</b>：10/31（六）、11/1（日）熱門店排隊，晚上計程車較難叫</li>
+          <li><b>最低點餐量</b>：部分韓國餐廳要求至少點 2 人份，3 人通常沒問題，我沒逐店查證</li>
+          <li><b>現金</b>：傳統市場與路邊攤多半只收現金，WOWPASS 不能用</li>
+          <li><b>備援</b>：把單檔 HTML 與 PDF 存進手機，下載釜山離線地圖，預約憑證截圖</li>
         </ul></div></details>
 <details class="acc"><summary><span>住宿</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="#3A2748" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></summary><div class="in"><p class="big">Felix by STX Hotel&amp;Suite</p>
         <ul>
@@ -432,6 +477,12 @@ h3{margin:0 0 6px;font-size:17px;font-weight:800}
       </ul>
     </div>
 </div></div>
+<div class="sheet" id="order" role="dialog" aria-modal="true" aria-label="給店員看的點餐清單"><div class="sheet-in">
+  <div class="sheet-h"><h2>給店員看</h2><button class="btn" data-act="closesheet" data-id="order">關閉</button></div>
+  <div class="ol-say">이거 주세요.</div>
+  <div id="order-list"></div>
+  <div class="ol-say">감사합니다.</div>
+</div></div>
 <div class="driver" id="driver" role="dialog" aria-modal="true" aria-label="給司機看">
   <p class="say">여기로 가 주세요. 감사합니다.</p>
   <p class="nm2" id="d-nm"></p><p class="ad" id="d-ad"></p><p class="en" id="d-en"></p><p class="zh" id="d-zh"></p>
@@ -453,7 +504,7 @@ const AIRPORT={ko:'부산 강서구 공항진입로 108',en:'108 Gonghangjinip-r
 const DAYS=[
 {n:1,date:'10 / 29（四）',title:'晚班機抵達 · 計程車直送飯店',tag:['warn','21:00 降落 · 搭計程車'],
  wear:'搭機與夜間抵達：<b>薄長袖＋外套</b>。深夜海風會涼，外套放隨身包。',
- brief:["17:40 起飛，15:10–15:20 前到桃園 T2 櫃檯", "21:00 抵達金海機場，出關與領行李抓 45–90 分", "計程車到飯店約 50–60 分，約 23:00 後入住（接機車已取消，沒有固定發車死線）"],
+ brief:["17:40 起飛，15:10–15:20 前到桃園 T2 櫃檯", "21:00 抵達金海機場，出關與領行李抓 45–90 分", "計程車到飯店約 50–60 分，約 23:00 後入住（接機車已取消，沒有固定發車死線）","韓國比台灣快 1 小時，落地後確認手機切到韓國時間（行程表裡桃園段是台灣時間、落地後是韓國時間）"],
  stops:[
  {type:'info',time:'約 14:20 – 15:00',name:'搭機捷直達車前往桃園機場 T2',
   tip:'台北車站（A1）到 A13 第二航廈，直達車約 39 分，班距約 15 分。<b>去程在 T2</b>，別在 T1 下車。T1、T2 之間的管制區外航廈電車 7/1 起已停駛，下錯站會很麻煩。你們不是從台北車站上車的話，從 15:10 抵達 T2 往前推。'},
@@ -473,7 +524,7 @@ const DAYS=[
 
 {n:2,date:'10 / 30（五）',title:'釜山北部 · 梵魚寺賞楓 · 辣燉排骨與宵夜',tag:['maple','🍁 紅葉重點日 · 단풍'],
  wear:'山區比市區涼：<b>排汗內層＋薄毛衣＋防風外套</b>。寺院石階多，穿好走的鞋。',
- brief:["09:30 從飯店出發；梵魚寺 08:00–17:00 開放，入場免費", "金剛纜車週一公休，今天週五可搭，約 17:30 前結束", "18:00 辣燉排骨店：營業時間我沒查到，先確認", "21:00 南川家宵夜，最後點餐 22:45"],
+ brief:["09:30 從飯店出發；梵魚寺 08:00–17:00 開放，入場免費", "金剛纜車週一公休，今天週五可搭，約 17:30 前結束", "18:00 辣燉排骨店：營業時間我沒查到，先確認", "21:00 南川家宵夜，最後點餐 22:45","日出約 06:43、日落約 17:32，天黑得早，戶外景點 17:00 前收尾"],
  checks:["14:45 到金剛公園纜車站，最晚 16:45 離開，別拖到 17:00 後", "南川家：最晚 22:15 前入座，先用 Tabling 登記候位"],
  backup:"下雨：梵魚寺殿宇可以避雨，但山區石階濕滑，鞋底要防滑。纜車遇強風或下雨可能停駛，就改在金剛公園散步，提早去吃晚餐。",
  stops:[
@@ -493,7 +544,7 @@ const DAYS=[
 
 {n:3,date:'10 / 31（六）',title:'影島海洋藝術 · 牛骨湯 · 遊艇賞無人機秀',tag:['warn','18:30 遊艇出航，18:00 前到場'],
  wear:'影島石階多、海風大：<b>防風外套＋好走的鞋</b>。晚上遊艇在海上風大，<b>帶保暖外層與圍巾</b>。',
- brief:["17:00 前要在巨大곰탕入座，否則放棄", "17:30 前到 The Bay 101 報到（登船前 30 分），18:30 出航", "19:00 船上看無人機秀，航程約 1 小時", "巨大곰탕 07:00–21:00（最後點餐 20:30），全年無休"],
+ brief:["17:00 前要在巨大곰탕入座，否則放棄", "17:30 前到 The Bay 101 報到（登船前 30 分），18:30 出航", "19:00 船上看無人機秀，航程約 1 小時", "巨大곰탕 07:00–21:00（最後點餐 20:30），全年無休","日落約 17:31，遊艇 18:30 出航時已天黑"],
  checks:["14:50 前上計程車離開 P.ARK；趕不上就略過 P.ARK 的後半", "17:00 還沒在巨大곰탕入座就放棄。船回港後（約 19:30 起）還來得及回頭吃，最後點餐 20:30", "17:30 沒到 The Bay 101：遲到很難退款或改期（官方須知）"],
  backup:"白天下雨：白淺灘與깡깡이只走一處，多留時間在海女館與 P.ARK 的室內。遊艇若因強風或下雨停航：依官方須知辦退款或改期，晚上改去海雲台的 SEA LIFE 水族館（週末 10:00–20:00，最後入場 19:00，電話 051-740-1700，離海灘步行約 3 分鐘），來不來得及要看通知的時間，趕不上就直接吃晚餐休息。",
  stops:[
@@ -521,7 +572,7 @@ const DAYS=[
 
 {n:4,date:'11 / 01（日）',title:'機張一日 · 斜坡車 · 伴手禮 · 彩繪蛋糕',tag:['pine','機張 · 玩樂日'],
  wear:'斜坡車在戶外高速下滑：<b>防風外套、包鞋</b>，長髮綁起來，口袋不放鬆散小物。彩繪蛋糕穿不怕沾到奶油的上衣。',
- brief:["10:00 斜坡車；入場截止在結束前 30 分（約 17:30–18:00）", "樂天 outlet 10:30–20:00，餐廳區到 21:00", "14:30 彩繪蛋糕：營業時間我沒查到，請先預約", "18:00 돌닭：旅客資料 15:00–16:30 休息、最後點餐 21:00"],
+ brief:["10:00 斜坡車；入場截止在結束前 30 分（約 17:30–18:00）", "樂天 outlet 10:30–20:00，餐廳區到 21:00", "14:30 彩繪蛋糕：營業時間我沒查到，請先預約", "18:00 돌닭：旅客資料 15:00–16:30 休息、最後點餐 21:00","日落約 17:30，戶外的斜坡車安排在白天"],
  checks:["蛋糕先問店家：能不能盒裝帶走、能不能在店內吃。外帶蛋糕進餐廳與咖啡廳多半不方便（我沒查證），建議在店內吃完或回飯店享用", "抱著蛋糕搭計程車，3 人加蛋糕可以選大型計程車。我的建議是不用包半天車，包車價格我沒查，真的需要再報價比較", "斜坡車票先在線上買好，週日人多"],
  backup:"斜坡車遇天氣不佳可能暫停（官方說明依現場判斷）。前一晚與當天早上看天氣，也可電話 051-722-6002 確認。取消時：午餐與逛街時間拉長在樂天 outlet，彩繪蛋糕往前排，下午改去海雲台的 SEA LIFE 水族館（週日 10:00–20:00，最後入場 19:00），再去廣安里吃 18:00 的晚餐。",
  stops:[
@@ -547,7 +598,7 @@ const DAYS=[
 
 {n:5,date:'11 / 02（一）',title:'南浦逛街 · 配眼鏡與買棉被 · 放鬆',tag:['maple','🛍 逛街購物日'],
  wear:'逛市場走不少路：<b>舒適的鞋＋薄外套</b>，包包選能拉好拉鍊的。晚上 Spa Land 帶好換洗衣物與髮圈。',
- brief:["今天週一：眼鏡店、鮑魚粥店、豬皮烤肉店我都沒查到公休資料，出發前用 Naver 確認", "國際市場週日休息，今天週一可逛", "15:00–17:30 SPA LAND（入場後最多 4 小時）；17:30 要離開", "18:00 초필살돼지구이：沒有線上預約，16:30 起可現場候位"],
+ brief:["今天週一：眼鏡店、鮑魚粥店、豬皮烤肉店我都沒查到公休資料，出發前用 Naver 確認", "國際市場週日休息，今天週一可逛", "15:00–17:30 SPA LAND（入場後最多 4 小時）；17:30 要離開", "18:00 초필살돼지구이：沒有線上預約，16:30 起可現場候位","日落約 17:29，戶外逛街安排在白天"],
  checks:["眼鏡店：先確認鏡片能不能當天取。行程只剩今天，不能當天取就換方案", "買棉被前先確認 Air Busan 託運額度"],
  stops:[
  {key:1,time:'08:00 – 09:00',name:'早餐　原祖鮑魚粥（원조전복죽집）',badge:'早餐首選',ko:'원조전복죽집',addr:{ko:'부산 해운대구 해운대해변로298번길 24 1층 23호',en:'1F Unit 23, 24 Haeundaehaebyeon-ro 298beon-gil, Haeundae-gu, Busan'},
@@ -606,10 +657,10 @@ const DAYS=[
 
 const CHECK=[
  '護照效期 6 個月以上',
- '10/27–10/29 填好電子入境卡，並截圖存手機',
+ '10/27–10/29 填好電子入境卡並截圖存手機。出發前先看外交部最新公告，確認要填電子版還是有紙本',
  '金海機場抵達後搭計程車：確認 Kakao T / Uber 已綁卡，備好少量現金',
  '去程桃園 T2；回程金海機場 T1（國際線）；回台灣的桃園航廈看登機證',
- '安裝 Kakao T 或 Uber，登入並綁好信用卡',
+ '安裝 Kakao T 或 Uber，登入並綁好信用卡，實際試叫一次車確認綁卡成功',
  '安裝 Naver 地圖（韓國步行與大眾運輸導航最準）',
  '安裝 CatchTable 與 Tabling，試著登入（巨大、南川家排隊用）',
  '預約 11/01 的石板雞（돌닭）與彩繪蛋糕 Atelier',
@@ -621,7 +672,10 @@ const CHECK=[
  '把外交部急難專線與釜山辦事處電話存進手機（見「緊急」）',
  '若要用 LINE Pay：更新 App、開啟定位服務，到「遊韓專區」確認條碼會切到韓國',
  '出發前一天與當天早上確認斜坡車營運（051-722-6002）',
- '確認 Air Busan 託運行李額度（要買棉被）',
+ '確認 Air Busan 託運行李額度（要買棉被）。回程預留棉被與化妝品的空間，100 ml 以上液體放託運',
+ '藥品：不要帶日本 EVE 等韓國禁帶的止痛藥；新鮮蔬果不能帶；行動電源與暖暖包依航空公司規定',
+ '下載釜山的 Google 離線地圖；預約憑證截圖存相簿；把 HTML 與 PDF 存進手機',
+ '確認旅平險／不便險，以及用哪張卡付機票（影響理賠）',
  '買好 eSIM 或網卡，換少量韓元現金',
  '截圖或加入主畫面，保存這份行程'
 ];
@@ -860,20 +914,30 @@ const dMD=d=>{const m=d.date.match(/(\d+)\s*\/\s*(\d+)/);return {m:+m[1],d:+m[2]
 const dWD=d=>{const m=d.date.match(/（(.)）/);return m?m[1]:'';};
 const chipDate=d=>{const x=dMD(d);return x.m+'/'+x.d;};
 const startMin=t=>{const m=String(t).match(/(\d{1,2}):(\d{2})/);return m?(+m[1])*60+(+m[2]):null;};
+function kst(){
+  try{
+    const f=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
+    const p={};f.formatToParts(new Date()).forEach(x=>{p[x.type]=x.value;});
+    return {y:+p.year,m:+p.month,d:+p.day,mins:(+p.hour)*60+(+p.minute)};
+  }catch(e){const n=new Date();return {y:n.getFullYear(),m:n.getMonth()+1,d:n.getDate(),mins:n.getHours()*60+n.getMinutes()};}
+}
+const tzOff=()=>-new Date().getTimezoneOffset();
 function todayInfo(){
-  const now=new Date();
-  const t0=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const k=kst();
+  const t0=new Date(k.y,k.m-1,k.d);
   const start=new Date(2026,9,29),end=new Date(2026,10,3);
   if(t0<start)return {mode:'before',days:Math.round((start-t0)/864e5)};
   if(t0>end)return {mode:'after'};
-  const di=DAYS.findIndex(d=>{const x=dMD(d);return x.m===t0.getMonth()+1&&x.d===t0.getDate();});
+  const di=DAYS.findIndex(d=>{const x=dMD(d);return x.m===k.m&&x.d===k.d;});
   if(di<0)return {mode:'before',days:0};
-  const mins=now.getHours()*60+now.getMinutes();
+  const off=tzOff();
+  let mins=k.mins;
+  if(di===0&&off===480){const n=new Date();mins=n.getHours()*60+n.getMinutes();}
   let idx=-1,first=-1;
   DAYS[di].stops.forEach((s,i)=>{const t=startMin(s.time);if(t===null)return;if(first<0)first=i;if(t<=mins)idx=i;});
   if(idx<0)idx=first<0?0:first;
   let nxt=-1;for(let i=idx+1;i<DAYS[di].stops.length;i++){const s=DAYS[di].stops[i];if(s.addr&&s.type!=='info'){nxt=i;break;}}
-  return {mode:'during',di:di,si:idx,next:nxt};
+  return {mode:'during',di:di,si:idx,next:nxt,off:off};
 }
 
 /* ================= state ================= */
@@ -938,15 +1002,19 @@ function renderToday(){
   if(ti.mode==='before'){
     const p=checksProgress();
     h+='<div class="hero">'+falls()+'<h1>釜山楓遊<br>快出發囉！</h1><div class="cd"><span>還有</span><b>'+ti.days+'</b><span>天</span></div><p>10/29（四）–11/03（二）　3 人</p>'+mascot('mas')+'</div>';
+    const k=kst(),td=new Date(k.y,k.m-1,k.d),open=new Date(2026,9,27);
+    const dd=Math.round((open-td)/864e5);
+    h+='<div class="note"><b>電子入境卡</b>　'+(dd>0?'10/27 起可以填，還有 '+dd+' 天。':'現在可以填了（10/27–10/29），填完截圖。')+'出發前先看外交部最新公告，確認要填電子版還是有紙本。<div class="actions"><a class="btn btn-book" target="_blank" rel="noopener" href="https://www.e-arrivalcard.go.kr/">官方填寫網站</a></div></div>';
     h+='<div class="sect">'+LEAF()+'出發前待辦　'+p.k+'/'+p.n+'</div><div class="prog" aria-label="待辦進度"><i style="width:'+(p.n?Math.round(p.k/p.n*100):0)+'%"></i></div>';
     const saved=ckDone(),todo=CHECK.map((t,i)=>({t:t,i:i})).filter(x=>saved.indexOf(x.i)<0).slice(0,4);
     h+='<ul class="chk" style="margin-top:12px">'+(todo.length?todo.map(x=>'<li><label><input type="checkbox" data-ck="'+x.i+'"><span>'+esc(x.t)+'</span></label></li>').join(''):'<li class="fine">待辦都完成了，太棒了！</li>')+'</ul>';
     h+='<div class="actions"><button class="btn btn-main" data-act="tab" data-tab="plan" data-i="0">看 Day 1 行程</button><button class="btn" data-act="tab" data-tab="info">全部待辦</button></div>';
-    h+='<div class="sect">'+LEAF()+'出發前先看</div><div class="actions"><button class="btn" data-act="tool" data-tool="pay">付款怎麼選</button><button class="btn" data-act="tool" data-tool="tax">退稅</button><button class="btn" data-act="tool" data-tool="phrase">常用韓文</button><button class="btn" data-act="tool" data-tool="budget">預算</button></div>';
+    h+='<div class="sect">'+LEAF()+'出發前先看</div><div class="actions"><button class="btn" data-act="tool" data-tool="pay">付款怎麼選</button><button class="btn" data-act="tool" data-tool="tax">退稅</button><button class="btn" data-act="tool" data-tool="phrase">常用韓文</button><button class="btn" data-act="tool" data-tool="budget">預算</button><button class="btn" data-act="tool" data-tool="snap">拍照翻譯</button><button class="btn" data-act="tool" data-tool="bag">行李</button></div>';
   }else if(ti.mode==='after'){
     h+='<div class="hero"><h1>旅程結束<br>歡迎回家！</h1><p>謝謝這趟好玩的釜山楓遊。</p>'+mascot('mas')+'</div><div class="actions"><button class="btn" data-act="tab" data-tab="plan" data-i="0">回顧行程</button></div>';
   }else{
     const d=DAYS[ti.di];
+    if(ti.off!==540){const diff=(540-ti.off)/60;h+='<div class="note warnbox"><b>手機時區不是韓國時間</b>　「現在」改以韓國時間計算'+(ti.di===0&&ti.off===480?'；Day 1 在台灣時以手機時間為準':'')+'。你的手機比韓國'+(diff>0?'慢 ':'快 ')+Math.abs(diff)+' 小時，落地後請開啟自動時區。</div>';}
     h+='<div class="hero">'+falls()+'<h1>Day '+d.n+'　'+chipDate(d)+'（'+dWD(d)+'）</h1><p>'+d.title+'</p>'+mascot('mas')+'</div>';
     h+='<div class="sect">'+LEAF()+'現在</div><ol class="tl">'+stopHTML(ti.di,ti.si,{now:true,open:true})+'</ol>';
     if(ti.next>=0)h+='<div class="sect">'+LEAF()+'下一站</div><ol class="tl">'+stopHTML(ti.di,ti.next,{})+'</ol>';
@@ -1004,6 +1072,9 @@ function renderBook(){
 /* ================= tools / info (static html + wiring) ================= */
 function setTool(t){
   state.tool=t;
+  if(t==='snap')renderSnap();
+  if(t==='bag')renderBag();
+  if(t==='budget')drawBudget();
   $$('.tp').forEach(p=>{p.hidden=p.id!=='tp-'+t;});
   $$('[data-act="tool"].chip').forEach(b=>b.classList.toggle('on',b.dataset.tool===t));
 }
@@ -1088,6 +1159,22 @@ document.addEventListener('click',e=>{
     else if(a==='bk'){state.bk=b.dataset.v==='all'?'all':+b.dataset.v;renderBook();}
     else if(a==='tool'){go('tools',{tool:b.dataset.tool});}
     else if(a==='goto'){state.q='';go('plan',{day:+b.dataset.d,focus:+b.dataset.s});}
+    else if(a==='snapadd'){snapAdd();}
+    else if(a==='snapdel'){snapDel(+b.dataset.i);}
+    else if(a==='snapmode'){SNAP.mode=b.dataset.v;saveSnap();renderSnap();}
+    else if(a==='snapk'){SNAP.k=!SNAP.k;saveSnap();renderSnap();}
+    else if(a==='snapclear'){SNAP.rows=[snapRow()];saveSnap();renderSnap();toast('已清空');}
+    else if(a==='prompt'){doCopy(buildPrompt(b.dataset.v),b);}
+    else if(a==='order')showOrder();
+    else if(a==='bagadd'){BAG.rows.push({n:'',kg:''});saveBag();renderBag();}
+    else if(a==='bagdel'){BAG.rows.splice(+b.dataset.i,1);if(!BAG.rows.length)BAG.rows.push({n:'',kg:''});saveBag();renderBag();}
+    else if(a==='ratereset'){RATES.wow='';RATES.card='';RATES.fee='';store.set('busan-rate2',RATES);initRates();refreshMoney();toast('已改用自動匯率');}
+    else if(a==='raterefresh'){toast('更新中…');fetchLiveRate().then(ok=>{refreshMoney();toast(ok?'已更新匯率':'無法連線更新，沿用目前匯率');});}
+    else if(a==='airun')aiRun();
+    else if(a==='jsonprompt')doCopy(aiPromptExternal(),b);
+    else if(a==='aiimport')aiImport();
+    else if(a==='aistop'){if(AI.ctl)AI.ctl.abort();}
+    else if(a==='aidel')aiDelPhoto(+b.dataset.i);
     else if(a==='sos')openSheet('sos');
     else if(a==='closesheet')closeSheet(b.dataset.id);
     return;
@@ -1099,9 +1186,18 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('input',e=>{
   if(e.target.id==='q'){state.q=e.target.value;state._refocus=true;renderPlan();}
+  if(e.target.id==='ai-paste'){AI.paste=e.target.value;}
+  if(e.target.id==='r-wow'||e.target.id==='r-card'||e.target.id==='r-fee'){saveRates();refreshMoney();}
+  if(e.target.dataset&&e.target.dataset.sf){snapInput(e.target);}
+  if(e.target.dataset&&e.target.dataset.bf){bagInput(e.target);}
+  if(e.target.id==='snap-people'){SNAP.people=Math.max(1,parseInt(e.target.value)||1);saveSnap();snapTotals();}
+  if(e.target.id==='bag-allow'){BAG.allow=e.target.value;saveBag();bagTotals();}
+  if(e.target.id==='krw'||e.target.id==='twdin')drawBudget();
   if(e.target.id==='phq'){const q=e.target.value.trim().toLowerCase();$$('#tp-phrase .ph').forEach(p=>{p.style.display=!q||p.textContent.toLowerCase().indexOf(q)>=0?'':'none';});}
 });
 document.addEventListener('change',e=>{
+  if(e.target&&(e.target.id==='ai-cam'||e.target.id==='ai-pick')){aiAddFiles(e.target.files);return;}
+  if(e.target&&e.target.tagName==='SELECT'&&e.target.dataset&&e.target.dataset.sf){snapInput(e.target);return;}
   const c=e.target.closest('[data-ck]');if(!c)return;
   const i=+c.dataset.ck;let saved=ckDone();
   if(c.checked){if(saved.indexOf(i)<0)saved.push(i);}else saved=saved.filter(x=>x!==i);
@@ -1113,29 +1209,372 @@ $('#d-copy').addEventListener('click',e=>doCopy(curAddr,e.currentTarget));
 $('#ld-close').addEventListener('click',closeLinkDialog);
 $('#ld-copy').addEventListener('click',e=>doCopy(ldUrl,e.currentTarget));
 $('#ld-top').addEventListener('click',()=>{try{window.top.location.href=ldUrl;}catch(e){}setTimeout(()=>{if(!document.hidden)toast('仍然無法開啟，請改用複製連結，或長按下方連結');},900);});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDriver();closeLinkDialog();closeSheet('sos');}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDriver();closeLinkDialog();closeSheet('sos');closeSheet('order');}});
 
-/* ================= budget & converter ================= */
-(function(){
-  const rows=[['遊艇賞無人機秀（已預約，3 人合計）',147000,147000],['機場計程車 ×2（去程＋回程）',50000,84000],['金剛纜車往返 ×3',27000,33000],['斜坡車 ×3（依搭乘回數）',84000,111000],['SPA LAND 入場 ×3',51000,78000]];
-  const fmt=n=>n.toLocaleString('en-US');
-  let lo=0,hi=0;rows.forEach(r=>{lo+=r[1];hi+=r[2];});
-  const rateEl=$('#rate'),krwEl=$('#krw'),twdinEl=$('#twdin');
-  if(!rateEl)return;
-  function rate(){const v=parseFloat(rateEl.value);return v>0?v:0;}
-  function draw(){
-    const r=rate();const t=n=>r?'約 '+fmt(Math.round(n*r)):'—';
-    let h='<tr><th>項目</th><th class="num">韓元（₩）</th><th class="num">台幣</th></tr>';
-    rows.forEach(x=>{h+='<tr><td>'+x[0]+'</td><td class="num">'+(x[1]===x[2]?fmt(x[1]):fmt(x[1])+' – '+fmt(x[2]))+'</td><td class="num">'+(r?(x[1]===x[2]?t(x[1]):t(x[1])+' – '+fmt(Math.round(x[2]*r))):'—')+'</td></tr>';});
-    h+='<tr><th>合計</th><th class="num">'+fmt(lo)+' – '+fmt(hi)+'</th><th class="num">'+(r?'約 '+fmt(Math.round(lo*r))+' – '+fmt(Math.round(hi*r)):'—')+'</th></tr>';
-    $('#bt').innerHTML=h;
-    const k=parseFloat((krwEl.value||'').replace(/,/g,''));$('#twd').textContent=(r&&k>=0)?fmt(Math.round(k*r)):'—';
-    const w=parseFloat((twdinEl.value||'').replace(/,/g,''));$('#krwout').textContent=(r&&w>=0)?fmt(Math.round(w/r)):'—';
+/* ================= money / rates ================= */
+const AUTO_BUILTIN={krwPerTwd:42.04,date:'2026-10-08',src:'市場中間價（XE、Investing、ValutaFX 約 42.0–42.1）',live:false};
+const RATES=Object.assign({wow:'',card:'',fee:''},store.get('busan-rate2',{}));
+let AUTO=Object.assign({},AUTO_BUILTIN);
+(function(){const sv=store.get('busan-autorate',null);if(sv&&sv.krwPerTwd>0&&String(sv.date)>=AUTO_BUILTIN.date)AUTO=Object.assign({},AUTO_BUILTIN,sv);})();
+const num=v=>{const x=parseFloat(String(v).replace(/,/g,''));return x>0?x:0;};
+function saveRates(){RATES.wow=($('#r-wow')||{}).value||'';RATES.card=($('#r-card')||{}).value||'';RATES.fee=($('#r-fee')||{}).value||'';store.set('busan-rate2',RATES);}
+function rateOf(k){const m=num(RATES[k==='card'?'card':'wow']);return m>0?m:AUTO.krwPerTwd;}
+const feePct=()=>num(RATES.fee);
+const cardOn=()=>num(RATES.card)>0||feePct()>0;
+function twdOf(krw,k){if(k==='card'){if(!cardOn())return null;return krw/rateOf('card')*(1+feePct()/100);}return krw/rateOf('wow');}
+const fmt=n=>Math.round(n).toLocaleString('en-US');
+const fmtT=n=>n>=100?fmt(n):(Math.round(n*10)/10).toFixed(1);
+function rateStatusHTML(){
+  const m=num(RATES.wow);let h='';
+  if(m>0)h+='WOWPASS 目前用你手動輸入的匯率：<b>1 台幣 ＝ '+m+' 韓元</b>。';
+  else h+='已自動帶入參考匯率：<b>1 台幣 ＝ '+AUTO.krwPerTwd+' 韓元</b>（'+AUTO.date.replace(/-/g,'/')+(AUTO.live?' 自動更新':' 內建')+'，'+AUTO.src+'）。這是市場價，不是 WOWPASS 實際匯率，換匯時請看機台或 App 的數字再手動輸入。';
+  if(cardOn())h+='<br>刷卡：1 台幣 ＝ '+rateOf('card')+' 韓元'+(feePct()>0?'，另加手續費 '+feePct()+'%':'')+'。';
+  return h;
+}
+function refreshRateUI(){
+  const st=$('#rate-status');if(st)st.innerHTML=rateStatusHTML();
+  const w=$('#r-wow');if(w)w.placeholder='自動 '+AUTO.krwPerTwd;
+  const c=$('#r-card');if(c)c.placeholder='自動 '+AUTO.krwPerTwd+'（選填）';
+  const at=$('#rate-attr');if(at)at.innerHTML=AUTO.live?'匯率來源：<a href="https://www.exchangerate-api.com">Rates By Exchange Rate API</a>':'';
+  const rb=$('#rate-refresh');if(rb)rb.hidden=!!window.claude||typeof fetch!=='function';
+}
+function refreshMoney(){refreshRateUI();drawBudget();if(state.tool==='snap')snapTotals();}
+function initRates(){const w=$('#r-wow'),c=$('#r-card'),f=$('#r-fee');if(w)w.value=RATES.wow||'';if(c)c.value=RATES.card||'';if(f)f.value=RATES.fee||'';refreshRateUI();}
+async function fetchLiveRate(){
+  if(window.claude||typeof fetch!=='function')return false;
+  try{
+    const ctl=typeof AbortController!=='undefined'?new AbortController():null;const t=ctl?setTimeout(()=>ctl.abort(),6000):null;
+    const r=await fetch('https://open.er-api.com/v6/latest/TWD',ctl?{signal:ctl.signal}:{});if(t)clearTimeout(t);
+    const j=await r.json();
+    if(j&&j.result==='success'&&j.rates&&j.rates.KRW>0){
+      const d=j.time_last_update_unix?new Date(j.time_last_update_unix*1000).toISOString().slice(0,10):AUTO_BUILTIN.date;
+      AUTO={krwPerTwd:Math.round(j.rates.KRW*100)/100,date:d,src:'ExchangeRate-API 每日市場價',live:true};
+      store.set('busan-autorate',AUTO);return true;
+    }
+  }catch(e){}
+  return false;
+}
+
+/* ---------- budget ---------- */
+const BUD=[['遊艇賞無人機秀（已預約，3 人合計）',147000,147000],['機場計程車 ×2（去程＋回程）',50000,84000],['金剛纜車往返 ×3',27000,33000],['斜坡車 ×3（依搭乘回數）',84000,111000],['SPA LAND 入場 ×3',51000,78000]];
+function drawBudget(){
+  const bt=$('#bt');if(!bt)return;
+  let lo=0,hi=0;BUD.forEach(r=>{lo+=r[1];hi+=r[2];});
+  const w=rateOf('wow');const t=n=>'約 '+fmtT(n/w);
+  let h='<tr><th>項目</th><th class="num">韓元（₩）</th><th class="num">台幣</th></tr>';
+  BUD.forEach(x=>{h+='<tr><td>'+x[0]+'</td><td class="num">'+(x[1]===x[2]?fmt(x[1]):fmt(x[1])+' – '+fmt(x[2]))+'</td><td class="num">'+(x[1]===x[2]?t(x[1]):t(x[1])+' – '+fmtT(x[2]/w))+'</td></tr>';});
+  h+='<tr><th>合計</th><th class="num">'+fmt(lo)+' – '+fmt(hi)+'</th><th class="num">約 '+fmtT(lo/w)+' – '+fmtT(hi/w)+'</th></tr>';
+  bt.innerHTML=h;
+  const k=num($('#krw').value);
+  $('#twd').textContent=k>0?fmtT(k/w):'—';
+  const tw=num($('#twdin').value);
+  $('#krwout').textContent=tw>0?fmt(tw*w):'—';
+}
+
+/* ================= snap (menu / product) ================= */
+const snapRow=()=>({n:'',ko:'',p:'',q:'1',ml:'',tw:'',d:'',u:false});
+const SNAP=Object.assign({mode:'menu',k:true,people:3,rows:[snapRow()]},store.get('busan-snap',{}));
+if(!Array.isArray(SNAP.rows)||!SNAP.rows.length)SNAP.rows=[snapRow()];
+function saveSnap(){store.set('busan-snap',SNAP);}
+function effPrice(r){const p=parseFloat(String(r.p).replace(/,/g,''));if(!(p>=0))return 0;return SNAP.k?p*1000:p;}
+function qtyOpts(cur){
+  const c=String(cur||'1');const vals=[];for(let n=1;n<=20;n++)vals.push(String(n));
+  if(vals.indexOf(c)<0&&c!=='')vals.push(c);
+  return vals.map(v=>'<option value="'+esc(v)+'"'+(v===c?' selected':'')+'>'+esc(v)+'</option>').join('');
+}
+function snapAdd(){SNAP.rows.push(snapRow());saveSnap();renderSnap();const l=$$('#snap-rows [data-sf="n"]');if(l.length){try{l[l.length-1].focus();}catch(e){}}}
+function snapDel(i){SNAP.rows.splice(i,1);if(!SNAP.rows.length)SNAP.rows.push(snapRow());saveSnap();renderSnap();}
+function snapInput(el){
+  const i=+el.dataset.i;if(!SNAP.rows[i])return;
+  SNAP.rows[i][el.dataset.sf]=el.value;saveSnap();snapTotals();
+}
+function cmpText(label,krTwd,tw,q){
+  const d=tw-krTwd,pct=tw>0?Math.abs(d)/tw*100:0;
+  const good=d>0;
+  let t='<b>'+label+'</b>　韓國 NT$'+fmtT(krTwd)+' vs 台灣 NT$'+fmtT(tw)+'　<span class="badge" style="background:'+(good?'var(--leaf)':'var(--maple)')+';color:#fff">'+(good?'韓國便宜 ':'韓國較貴 ')+'NT$'+fmtT(Math.abs(d))+'（'+Math.round(pct)+'%）</span>';
+  if(q>1)t+='　×'+q+'：'+(good?'省 ':'多花 ')+'NT$'+fmtT(Math.abs(d)*q);
+  return t;
+}
+function rowCalc(r){
+  const ep=effPrice(r),q=Math.max(0,parseFloat(r.q)||0),sub=ep*q;
+  let line=r.u?'<span class="badge" style="background:var(--maple);color:#fff">請對照原圖確認</span>　':'';
+  if(ep>0){
+    line+='₩'+fmt(ep)+(q!==1?' × '+q+' ＝ ₩'+fmt(sub):'');
+    line+='　≈ <b>NT$'+fmtT(twdOf(sub,'wow'))+'</b>'+(q!==1?'（每件 NT$'+fmtT(twdOf(ep,'wow'))+'）':'');
+    if(cardOn())line+='　刷卡約 NT$'+fmtT(twdOf(sub,'card'));
   }
-  try{const sv=localStorage.getItem('busan-rate');if(sv)rateEl.value=sv;}catch(e){}
-  [rateEl,krwEl,twdinEl].forEach(el=>el.addEventListener('input',()=>{if(el===rateEl){try{localStorage.setItem('busan-rate',rateEl.value);}catch(e){}}draw();}));
-  draw();
-})();
+  if(SNAP.mode==='product'){
+    const ml=parseFloat(r.ml)||0;
+    if(ml>100)line+=(line?'　':'')+'<span class="badge" style="background:var(--orange);color:#fff">液體 >100 ml 託運</span>';
+    const tw=parseFloat(r.tw);
+    if(ep>0){
+      const w1=twdOf(ep,'wow'),c1=twdOf(ep,'card');
+      if(tw>0)line+='<div class="cmp">'+cmpText('WOWPASS',w1,tw,q)+(c1!==null?'<br>'+cmpText('刷卡',c1,tw,q):'')+'</div>';
+      else line+='<div class="cmp">填上「台灣售價」就能比較價差。</div>';
+    }
+  }
+  return line;
+}
+function snapDetailHTML(){
+  const rows=SNAP.rows.filter(r=>effPrice(r)>0&&(parseFloat(r.q)||0)>0);
+  if(!rows.length)return '';
+  const w=rateOf('wow'),co=cardOn();
+  let h='<h3 class="sect" style="margin:14px 0 6px">台幣明細</h3><div class="tbl"><table><tr><th>品項</th><th class="num">韓元小計</th><th class="num">NT$ WOWPASS</th>'+(co?'<th class="num">NT$ 刷卡</th>':'')+'</tr>';
+  let tot=0;
+  rows.forEach(r=>{const ep=effPrice(r),q=parseFloat(r.q)||0,sub=ep*q;tot+=sub;
+    h+='<tr><td>'+esc(r.n||r.ko||'（未命名）')+'<div class="fine">₩'+fmt(ep)+(q!==1?' × '+q:'')+'</div></td><td class="num">₩'+fmt(sub)+'</td><td class="num">'+fmtT(sub/w)+'</td>'+(co?'<td class="num">'+fmtT(twdOf(sub,'card'))+'</td>':'')+'</tr>';});
+  h+='<tr><th>合計</th><th class="num">₩'+fmt(tot)+'</th><th class="num">'+fmtT(tot/w)+'</th>'+(co?'<th class="num">'+fmtT(twdOf(tot,'card'))+'</th>':'')+'</tr></table></div>';
+  h+='<p class="fine">算式：韓元 ÷ '+w+'（WOWPASS 匯率）＝ 台幣'+(co?'；刷卡：韓元 ÷ '+rateOf('card')+(feePct()>0?' × '+(1+feePct()/100).toFixed(3)+'（含 '+feePct()+'% 手續費）':'')+' ＝ 台幣':'')+'。合計用總額換算，可能與各列加總差 1 元左右。</p>';
+  return h;
+}
+function snapTotals(){
+  const root=$('#snap-sum');if(!root)return;
+  let tot=0,liq=0;
+  SNAP.rows.forEach((r,i)=>{
+    const ep=effPrice(r),q=Math.max(0,parseFloat(r.q)||0);tot+=ep*q;
+    if(SNAP.mode==='product'&&(parseFloat(r.ml)||0)>100&&q>0)liq+=q;
+    const el=$('#snap-line-'+i);if(el)el.innerHTML=rowCalc(r);
+  });
+  const w=twdOf(tot,'wow'),c=twdOf(tot,'card');
+  let h='<div class="sumbig">合計　₩'+fmt(tot)+'</div>';
+  h+='<div>WOWPASS 匯率約 <b>NT$'+fmtT(w)+'</b></div>';
+  if(c!==null)h+='<div>刷卡約 <b>NT$'+fmtT(c)+'</b>'+(feePct()>0?'（含手續費 '+feePct()+'%）':'')+'</div>';
+  if(SNAP.people>1&&tot>0)h+='<div>'+SNAP.people+' 人均分每人約 ₩'+fmt(tot/SNAP.people)+'（NT$'+fmtT(w/SNAP.people)+'）</div>';
+  if(SNAP.mode==='product'){
+    let kw=0,kc=0,tt=0,cnt=0,miss=0;
+    SNAP.rows.forEach(r=>{const ep=effPrice(r),q=Math.max(0,parseFloat(r.q)||0),tw=parseFloat(r.tw);if(ep<=0||q<=0)return;
+      if(tw>0){cnt++;tt+=tw*q;kw+=twdOf(ep*q,'wow');const b=twdOf(ep*q,'card');if(b!==null)kc+=b;}else miss++;});
+    if(cnt>0){
+      const cl=(lab,kr)=>{const d=tt-kr,good=d>0;return '<div><b>'+lab+'</b>　韓國 NT$'+fmtT(kr)+' vs 台灣 NT$'+fmtT(tt)+'　'+(good?'合計省 ':'合計多花 ')+'<b style="color:'+(good?'var(--leaf)':'var(--maple)')+'">NT$'+fmtT(Math.abs(d))+'（'+Math.round(Math.abs(d)/tt*100)+'%）</b></div>';};
+      h+='<div style="margin-top:8px"><b>價差比較（有填台灣價的 '+cnt+' 項）</b></div>';
+      h+=cl('WOWPASS',kw);
+      if(c!==null)h+=cl('刷卡',kc);
+      if(miss>0)h+='<div class="fine">另有 '+miss+' 項還沒填台灣價，未計入比較。</div>';
+    }else h+='<div class="fine" style="margin-top:6px">在每列填上「台灣售價」，這裡會顯示韓國與台灣的合計價差。</div>';
+  }
+  if(SNAP.mode==='product'&&liq>0)h+='<div class="note warnbox" style="margin-top:8px">有 '+liq+' 件容量超過 100 ml 的液體，回程搭國際線要放託運，請預留行李空間。</div>';
+  root.innerHTML=h;
+  const d=$('#snap-detail');if(d)d.innerHTML=snapDetailHTML();
+}
+function renderSnap(){
+  const root=$('#snap-root');if(!root)return;
+  const prod=SNAP.mode==='product';
+  let h='<div class="seg" style="margin-bottom:8px"><button class="chip sm'+(!prod?' on':'')+'" data-act="snapmode" data-v="menu">菜單</button><button class="chip sm'+(prod?' on':'')+'" data-act="snapmode" data-v="product">商品（Olive Young 等）</button></div>';
+  h+=aiCardHTML(prod);
+  h+='<div class="cv-row" style="margin:10px 0"><button class="chip sm'+(SNAP.k?' on':'')+'" data-act="snapk" aria-pressed="'+SNAP.k+'">價格省略三個零（12 ＝ ₩12,000）</button><label class="fine">人數 <input id="snap-people" inputmode="numeric" value="'+SNAP.people+'" style="width:3.5em"></label></div>';
+  h+='<div id="snap-rows">';
+  SNAP.rows.forEach((r,i)=>{
+    h+='<div class="rowc'+(r.u?' u':'')+'"><div class="rc1"><input data-sf="n" data-i="'+i+'" value="'+esc(r.n)+'" placeholder="品名（中文或備註）" aria-label="品名"><button class="btn" data-act="snapdel" data-i="'+i+'" aria-label="刪除這一列">刪除</button></div>'
+     +'<div class="rc2"><input data-sf="ko" data-i="'+i+'" class="kr" value="'+esc(r.ko)+'" placeholder="韓文名（選填）" aria-label="韓文名">'
+     +'<input data-sf="p" data-i="'+i+'" inputmode="decimal" value="'+esc(r.p)+'" placeholder="價格" aria-label="價格"><select data-sf="q" data-i="'+i+'" aria-label="數量">'+qtyOpts(r.q)+'</select></div>'
+     +(prod?'<div class="rc2"><input data-sf="ml" data-i="'+i+'" inputmode="decimal" value="'+esc(r.ml)+'" placeholder="容量 ml" aria-label="容量"><input data-sf="tw" data-i="'+i+'" inputmode="decimal" value="'+esc(r.tw)+'" placeholder="台灣售價 NT$（每件，選填）" aria-label="台灣售價"></div>':'')
+     +(r.d?'<div class="fine" style="margin-bottom:4px">'+esc(r.d)+'</div>':'')
+     +'<div class="fine" id="snap-line-'+i+'"></div></div>';
+  });
+  h+='</div><div class="actions"><button class="btn" data-act="snapadd">＋ 新增一列</button><button class="btn" data-act="snapclear">清空</button></div><div id="snap-detail"></div><div class="sumbox" id="snap-sum"></div>';
+  h+='<p class="fine" style="margin-top:10px">AI 或 OCR 可能讀錯價格與成分，請以菜單與標籤原文為準。過敏原、葷素與膚質是否適合不保證正確，請向店員或專業人員確認。拍照會把圖片上傳到你使用的服務，請避開人臉。</p>';
+  root.innerHTML=h;snapTotals();
+}
+function buildPrompt(kind){
+  const w=rateOf('wow'),c=cardOn()?rateOf('card'):0;
+  const rate='匯率用 1 台幣 ＝ '+w+' 韓元'+(num(RATES.wow)>0?'（WOWPASS）':'（市場參考匯率）')+(c?'，刷卡匯率 1 台幣 ＝ '+c+' 韓元'+(feePct()>0?'，另加 '+feePct()+'% 手續費':''):'');
+  if(kind==='product')return '這是韓國 Olive Young（올리브영）的商品照片或價格標籤。請幫我：\n1. 列出品牌、品名（韓文與繁體中文）、容量、價格（韓元）、促銷（1+1、贈品、折扣條件）。\n2. 價格換算成台幣，'+rate+'。\n3. 用簡單的話說明功效與主要成分，標出常見刺激性或過敏原成分，並提醒我自己確認是否適合我的膚質。\n4. 若看得到使用期限請一併列出。容量超過 100 ml 的液體請標註「國際線需託運」。\n5. 看不清楚的地方標「不確定」，不要猜。';
+  return '這是韓國餐廳的菜單照片。請幫我：\n1. 逐項列出：韓文原名、繁體中文名、一句簡介（主要食材、辣度、是否含豬肉／牛肉／海鮮）、價格（韓元）。\n2. 價格換算成台幣，'+rate+'。菜單若省略三個零（例如 12 代表 12,000 韓元），請依上下文判斷並說明。\n3. 價格或文字看不清楚時請標「不確定」，不要猜。\n4. 最後依 '+SNAP.people+' 人推薦一組點餐組合，並估算總額與每人金額（台幣）。\n5. 過敏原與葷素只能參考，請提醒我向店員確認。';
+}
+function showOrder(){
+  const lines=SNAP.rows.filter(r=>(r.ko||r.n)&&(parseFloat(r.q)||0)>0).map(r=>(r.ko||r.n)+'  × '+(parseFloat(r.q)||0));
+  const box=$('#order-list');
+  box.innerHTML=lines.length?lines.map(x=>'<div class="ol">'+esc(x)+'</div>').join(''):'<p class="fine">還沒有品項。請先在「拍照翻譯」填入韓文名與數量。</p>';
+  openSheet('order');
+}
+
+/* ================= baggage ================= */
+const BAG=Object.assign({allow:'',rows:[{n:'',kg:''}]},store.get('busan-bag',{}));
+if(!Array.isArray(BAG.rows)||!BAG.rows.length)BAG.rows=[{n:'',kg:''}];
+function saveBag(){store.set('busan-bag',BAG);}
+function bagInput(el){const i=+el.dataset.i;if(!BAG.rows[i])return;BAG.rows[i][el.dataset.bf]=el.value;saveBag();bagTotals();}
+function bagTotals(){
+  const root=$('#bag-sum');if(!root)return;
+  let t=0;BAG.rows.forEach(r=>{t+=parseFloat(r.kg)||0;});
+  const a=parseFloat(BAG.allow);let h='<div class="sumbig">合計　'+(Math.round(t*10)/10)+' kg</div>';
+  if(a>0){const left=a-t;h+='<div>額度 '+a+' kg，'+(left>=0?'還剩 <b>'+(Math.round(left*10)/10)+' kg</b>':'<b style="color:var(--maple)">超過 '+(Math.round(-left*10)/10)+' kg</b>')+'</div>';}
+  else h+='<div class="fine">先填託運額度才會比較</div>';
+  root.innerHTML=h;
+}
+function renderBag(){
+  const root=$('#bag-root');if(!root)return;
+  let h='<div class="note">託運額度依你的票種而定，我沒查到 Air Busan 的規定，請自行填入。100 ml 以上的液體（含化妝水與乳液）國際線要放託運，行動電源依航空公司規定隨身帶。</div>';
+  h+='<div class="cv-row" style="margin:10px 0">託運額度 <input id="bag-allow" inputmode="decimal" value="'+esc(BAG.allow)+'" style="width:5em"> kg</div>';
+  BAG.rows.forEach((r,i)=>{h+='<div class="rowc"><div class="rc1"><input data-bf="n" data-i="'+i+'" value="'+esc(r.n)+'" placeholder="物品（例如：棉被）" aria-label="物品"><input data-bf="kg" data-i="'+i+'" inputmode="decimal" value="'+esc(r.kg)+'" placeholder="kg" style="max-width:5em" aria-label="重量"><button class="btn" data-act="bagdel" data-i="'+i+'" aria-label="刪除">刪除</button></div></div>';});
+  h+='<div class="actions"><button class="btn" data-act="bagadd">＋ 新增一列</button></div><div class="sumbox" id="bag-sum"></div>';
+  root.innerHTML=h;bagTotals();
+}
+
+/* ================= AI photo recognition (Claude sample capability) ================= */
+const AI={sample:null,caps:null,ready:false,checked:false,busy:false,ctl:null,photos:[],msg:'',paste:''};
+function aiMsg(t){AI.msg=t;const el=$('#ai-status');if(el)el.textContent=t;}
+async function aiInit(){
+  try{
+    if(window.claude&&typeof window.claude.use==='function'){
+      const smp=await window.claude.use('sample');
+      if(smp){let caps=null;try{caps=await smp.limits();}catch(e){caps=null;}
+        if(caps&&caps.images){AI.sample=smp;AI.caps=caps;AI.ready=true;}}
+    }
+  }catch(e){}
+  AI.checked=true;
+  if(state.tool==='snap')renderSnap();
+}
+async function aiShrink(f){
+  if(f.size<2.5*1024*1024||typeof createImageBitmap!=='function')return f;
+  const bmp=await createImageBitmap(f,{imageOrientation:'from-image'});
+  const sc=Math.min(1,2000/Math.max(bmp.width,bmp.height));
+  const c=document.createElement('canvas');c.width=Math.round(bmp.width*sc);c.height=Math.round(bmp.height*sc);
+  c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
+  const b=await new Promise(r=>c.toBlob(r,'image/jpeg',0.85));
+  return b||f;
+}
+async function aiAddFiles(list){
+  if(!AI.ready)return;
+  const max=(AI.caps&&AI.caps.images&&AI.caps.images.maxCount)||3;
+  for(const f of Array.prototype.slice.call(list||[])){
+    if(AI.photos.length>=max){toast('一次最多 '+max+' 張');break;}
+    let blob=f;try{blob=await aiShrink(f);}catch(e){blob=f;}
+    let url='';try{url=URL.createObjectURL(blob);}catch(e){}
+    AI.photos.push({blob:blob,url:url});
+  }
+  aiMsg('');renderSnap();
+}
+function aiDelPhoto(i){const p=AI.photos[i];if(p&&p.url){try{URL.revokeObjectURL(p.url);}catch(e){}}AI.photos.splice(i,1);renderSnap();}
+function aiClearPhotos(){AI.photos.forEach(p=>{if(p.url){try{URL.revokeObjectURL(p.url);}catch(e){}}});AI.photos=[];}
+function aiPrompt(){
+  if(SNAP.mode==='product')return '你是韓國購物（Olive Young 等）商品翻譯助手。圖片是商品、價格標籤或成分表的一部分。請辨識圖中每個商品，每行輸出一個 JSON 物件（JSON Lines），不要用陣列、不要 Markdown、不要任何說明文字。每個物件的欄位：\n{"brand":"品牌","ko":"韓文品名","zh":"繁體中文品名","ml":容量數字（毫升或克，看不出來填 null）,"price_printed":"價格在標籤上的原樣文字，沒有就空字串","price_krw":完整韓元整數（無法確定填 null）,"promo":"促銷（1+1、贈品、折扣條件），沒有就空字串","desc":"30 字內說明功效與主要成分，標出常見刺激性或過敏原成分","expiry":"使用期限，看不到就空字串","uncertain":true或false}\n規則：看不清楚或猜測的欄位請把 uncertain 設為 true，不要編造；不確定的價格 price_krw 填 null；不要回傳台幣；不要判斷是否適合我的膚質。';
+  return '你是韓國菜單翻譯助手。圖片是韓國餐廳菜單的一部分。請辨識圖中每個品項，每行輸出一個 JSON 物件（JSON Lines），不要用陣列、不要 Markdown、不要任何說明文字。每個物件的欄位：\n{"ko":"韓文原名","zh":"繁體中文名","desc":"20 字內簡介：主要食材、辣度、豬牛海鮮（看不出來寫未知）","price_printed":"價格在菜單上的原樣文字，沒有就空字串","price_krw":完整韓元整數（菜單常省略三個零，例如寫 12 代表 12000，請依上下文推論；無法確定填 null）,"uncertain":true或false}\n規則：看不清楚或猜測的欄位請把 uncertain 設為 true，不要編造；不確定的價格 price_krw 填 null；同名品項不同份量（小／中／大）請分開列；不要翻譯店名與地址；不要回傳台幣。';
+}
+function aiPromptExternal(){return aiPrompt()+'\n\n品項很多時請分批輸出：每批最多 40 項，批次結尾不要加任何說明；我回「繼續」，你再接著列下一批。';}
+/* pull every complete flat {...} object out of free text: works for JSON arrays, JSON Lines, wrappers, and truncated output */
+function aiExtractObjects(text){
+  const s=String(text||''),out=[],stack=[];let inStr=false,esc=false;
+  for(let i=0;i<s.length;i++){
+    const ch=s[i];
+    if(inStr){if(esc)esc=false;else if(ch==='\\')esc=true;else if(ch==='"')inStr=false;continue;}
+    if(ch==='"'&&stack.length){inStr=true;continue;}
+    if(ch==='{'){if(stack.length)stack[stack.length-1].nested=true;stack.push({s:i,nested:false});}
+    else if(ch==='}'&&stack.length){
+      const o=stack.pop();
+      if(!o.nested){try{const v=JSON.parse(s.slice(o.s,i+1));if(v&&typeof v==='object'&&!Array.isArray(v))out.push(v);}catch(e){}}
+    }
+  }
+  return out;
+}
+function aiApply(items){
+  const prod=SNAP.mode==='product';const rows=[];let dup=0;
+  const seen={};SNAP.rows.forEach(r=>{if(r.n||r.ko)seen[(r.ko||r.n)+'|'+r.p]=1;});
+  (items||[]).slice(0,120).forEach(it=>{
+    if(!it||typeof it!=='object')return;
+    const pk=(it.price_krw===null||it.price_krw===undefined||it.price_krw==='')?NaN:Number(it.price_krw);
+    const has=isFinite(pk)&&pk>0;
+    const r=snapRow();
+    if(prod){r.n=[it.brand,it.zh].filter(Boolean).join(' ');r.ml=(it.ml!==null&&it.ml!==undefined&&it.ml!=='')?String(it.ml):'';}
+    else{r.n=it.zh||'';}
+    r.ko=it.ko||'';
+    r.p=has?(SNAP.k?String(Math.round(pk)/1000):String(Math.round(pk))):'';
+    r.q='1';
+    const bits=[];
+    if(it.desc)bits.push(String(it.desc));
+    if(prod&&it.promo)bits.push('促銷：'+it.promo);
+    if(prod&&it.expiry)bits.push('效期：'+it.expiry);
+    if(it.price_printed&&String(it.price_printed).trim())bits.push('原寫：'+it.price_printed);
+    r.d=bits.join('｜');r.u=!!it.uncertain||!has;
+    if(!(r.n||r.ko))return;
+    const key=(r.ko||r.n)+'|'+r.p;
+    if(seen[key]){dup++;return;}
+    seen[key]=1;rows.push(r);
+  });
+  if(rows.length){
+    if(SNAP.rows.length===1&&!SNAP.rows[0].n&&!SNAP.rows[0].ko&&!SNAP.rows[0].p)SNAP.rows=[];
+    SNAP.rows=SNAP.rows.concat(rows);saveSnap();
+  }
+  return {added:rows.length,dup:dup};
+}
+const AI_ERR={
+  rate_limited:'呼叫太頻繁，或你的 Claude 用量已達上限，請稍後再試。',
+  session_expired:'登入已過期，請重新登入 claude.ai 後再試。',
+  image_rejected:'照片格式或大小不符，請換一張（支援 JPEG、PNG、WebP、GIF）。',
+  refused:'Claude 沒有處理這張照片，請換一張只含菜單或商品標籤的照片。',
+  empty_completion:'沒有讀到品項，請拍近一點、光線足夠再試。',
+  prompt_too_large:'內容太大，請減少照片張數。',
+  upstream_error:'連線出了問題，請稍後再手動試一次。'
+};
+async function aiRun(){
+  if(!AI.ready||AI.busy||!AI.photos.length)return;
+  AI.busy=true;AI.ctl=new AbortController();renderSnap();
+  const total=AI.photos.length;let added=0,dups=0,doneAll=true;const notes=[];
+  try{
+    for(let i=0;i<total;i++){
+      const tag='第 '+(i+1)+'/'+total+' 張';
+      aiMsg(tag+'：辨識中…約 10–60 秒，第一次會先請你允許使用 Claude。');
+      let text='',trunc=false,err=null;
+      try{
+        const res=await AI.sample(aiPrompt(),{images:[AI.photos[i].blob],signal:AI.ctl.signal,modelTier:'default',onText:u=>{text=u.text;aiMsg(tag+'：已讀到 '+aiExtractObjects(text).length+' 項…');}});
+        text=res.text;trunc=!!res.truncated;
+      }catch(e){err=e||{};if(err.text)text=err.text;}
+      const items=aiExtractObjects(text);
+      if(items.length){const r=aiApply(items);added+=r.added;dups+=r.dup;}
+      if(trunc)notes.push(tag+'內容太長被截斷，只讀到前 '+items.length+' 項，請把這張拆成小區塊再拍一次。');
+      if(err&&err.code){
+        const c=err.code;
+        if(c==='cancelled'){notes.push('已停止。');doneAll=false;break;}
+        if(['not_granted','sampling_disabled','not_declared','capability_disabled','capability_removed','images_unavailable'].indexOf(c)>=0){AI.ready=false;doneAll=false;break;}
+        if(c==='invalid_json'||c==='empty_completion')notes.push(tag+'：'+AI_ERR.empty_completion);
+        else notes.push(tag+'：'+(AI_ERR[c]||AI_ERR.upstream_error)+(items.length?'（已保留中途讀到的 '+items.length+' 項）':''));
+        if(c==='rate_limited'||c==='session_expired'){doneAll=false;break;}
+      }
+    }
+  }finally{
+    AI.busy=false;AI.ctl=null;
+    if(added>0&&doneAll)aiClearPhotos();
+    let msg=added>0?'已加入 '+added+' 項'+(dups?'（略過 '+dups+' 項重複）':'')+'，標紅的請對照原圖確認價格與品名。':(dups?'讀到的品項都已在表格裡（略過 '+dups+' 項重複）。':'');
+    AI.msg=(msg+' '+notes.join(' ')).trim();
+    if(added>0)toast('辨識完成：'+added+' 項');
+    renderSnap();
+  }
+}
+const ACCSVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="#3A2748" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function backupHTML(){
+  return '<details class="acc"><summary><span>Claude 不能用時的備援</span>'+ACCSVG+'</summary><div class="in">'
+   +'<ol class="steps"><li>按「複製 JSON 提示詞」。</li><li>到任何看得懂圖片的 AI App（Claude、Gemini、ChatGPT 都可以），貼上提示詞並附上菜單或商品照片。</li><li>把 AI 回的結果整段複製，貼到下面的方框，按「匯入」，就會自動填進表格。</li><li>菜單很長時，AI 會分批回覆（每批最多 40 項），回「繼續」拿下一批，每批貼上匯入一次即可，重複的品項會自動略過。</li></ol>'
+   +'<div class="actions"><button class="btn btn-main" data-act="jsonprompt">複製 JSON 提示詞</button></div>'
+   +'<textarea id="ai-paste" rows="4" placeholder="把 AI 回的結果貼在這裡">'+esc(AI.paste||'')+'</textarea>'
+   +'<div class="actions"><button class="btn btn-book" data-act="aiimport">匯入貼上的結果</button></div><div class="fine" id="ai-import-msg"></div>'
+   +'<p class="fine">連 AI App 都沒有時：用手機內建的相機翻譯（Google 翻譯、Papago 都有），照畫面手動填表即可，換算與價差比較照樣自動算。這個備援在任何版本都能用，包括存在手機的單檔與 GitHub 版。</p></div></details>';
+}
+function aiImport(){
+  const el=$('#ai-import-msg');
+  const items=aiExtractObjects(AI.paste);
+  if(!items.length){if(el)el.textContent='讀不出品項。請確認貼上的是 AI 回的內容（每個品項是一個 { } 物件）。';return;}
+  const r=aiApply(items);
+  if(r.added===0&&r.dup===0){if(el)el.textContent='內容格式不符，沒有可用的品項。';return;}
+  AI.paste='';AI.msg='';renderSnap();
+  toast(r.added?'已匯入 '+r.added+' 項'+(r.dup?'，略過 '+r.dup+' 項重複':''):'這些品項都已在表格裡');
+}
+function aiCardHTML(prod){
+  const manual='<div class="actions"><button class="btn btn-main" data-act="prompt" data-v="'+(prod?'product':'menu')+'">複製'+(prod?'商品':'菜單')+'對話提示詞</button>'+(!prod?'<button class="btn" data-act="order">顯示給店員看</button>':'')+'</div>';
+  if(!AI.checked)return '<div class="note">正在檢查拍照辨識功能…</div>'+manual+backupHTML();
+  if(!AI.ready){
+    return '<div class="note"><b>拍照辨識</b>　目前這個畫面不能用。這個功能只在 claude.ai 開啟的線上版才有，而且需要允許使用 Claude。請展開下方「Claude 不能用時的備援」，用任何 AI App 辨識後把結果貼回來，或手動填表。'+(AI.msg?'<div class="fine" style="margin-top:6px">'+esc(AI.msg)+'</div>':'')+'</div>'+manual+backupHTML();
+  }
+  const acc=(AI.caps.images.mediaTypes||[]).join(',')||'image/*';
+  let h='<div class="note"><b>拍照辨識</b>　拍照或選照片，Claude 會讀出品項並填進下面的表格。菜單很長時請一次拍一個區塊（每張照片單獨辨識，結果會累加），字拍大一點更準。照片會被縮到約 120 萬像素，太小的字可能讀不到。第一次會請你允許，辨識會用到你自己的 Claude 額度。請避開人臉。';
+  h+='<div class="actions"><label class="btn btn-main" for="ai-cam">拍照</label><label class="btn" for="ai-pick">選照片</label>';
+  if(AI.busy)h+='<button class="btn" data-act="aistop">停止</button>';
+  else if(AI.photos.length)h+='<button class="btn btn-book" data-act="airun">開始辨識（'+AI.photos.length+' 張）</button>';
+  h+='</div><input id="ai-cam" type="file" accept="image/*" capture="environment" hidden><input id="ai-pick" type="file" accept="'+esc(acc)+'" multiple hidden>';
+  if(AI.photos.length)h+='<div class="thumbs">'+AI.photos.map((p,i)=>'<div class="thumb">'+(p.url?'<img src="'+p.url+'" alt="已選照片 '+(i+1)+'">':'<span>照片 '+(i+1)+'</span>')+(AI.busy?'':'<button data-act="aidel" data-i="'+i+'" aria-label="移除這張">×</button>')+'</div>').join('')+'</div>';
+  h+='<div class="fine" id="ai-status" style="margin-top:6px">'+esc(AI.msg)+'</div></div>'+manual+backupHTML();
+  return h;
+}
+initRates();drawBudget();aiInit();
+if(!window.claude){fetchLiveRate().then(ok=>{if(ok)refreshMoney();});}
 
 /* ================= boot ================= */
 (function(){
