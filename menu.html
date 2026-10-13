@@ -247,7 +247,7 @@ const LANGS={
 const ZERO_DEC=['JPY','KRW','VND','IDR','CLP','HUF','ISK','PYG','UGX'];
 
 /* ================= state ================= */
-const row0=()=>({n:'',orig:'',p:'',q:'1',d:'',u:false});
+const row0=()=>({n:'',orig:'',p:'',q:'0',d:'',u:false});
 const S=Object.assign({place:'JP',custom:'',lang:'ja',langAuto:true,k:false,people:2,extra:'',rows:[row0()]},store.get('tmx-state',{}));
 if(!Array.isArray(S.rows)||!S.rows.length)S.rows=[row0()];
 if(!PLACES.some(p=>p.id===S.place))S.place='JP';
@@ -370,14 +370,17 @@ function initDest(){
 /* ================= rows / math ================= */
 function effPrice(r){const p=parseNum(r.p);if(!(p>=0))return 0;return S.k?p*1000:p;}
 function qtyOpts(cur){
-  const c=String(cur||'1');const vals=[];for(let n=1;n<=20;n++)vals.push(String(n));
-  if(vals.indexOf(c)<0&&c!=='')vals.push(c);
+  const c=(cur===undefined||cur===null||cur==='')?'0':String(cur);const vals=[];for(let n=0;n<=20;n++)vals.push(String(n));
+  if(vals.indexOf(c)<0)vals.push(c);
   return vals.map(v=>'<option value="'+esc(v)+'"'+(v===c?' selected':'')+'>'+esc(v)+'</option>').join('');
 }
 function rowCalc(r){
   const c=CUR(),f=extraF(),ep=effPrice(r),q=Math.max(0,parseFloat(r.q)||0),sub=ep*q;
   let line=r.u?'<span class="badge" style="background:var(--maple);color:#fff">請對照原圖確認</span>　':'';
-  if(ep>0){
+  if(ep>0&&q===0){
+    const w0=twdOf(ep*f,'cash');
+    line+=fmtL(ep)+' '+c+(w0!==null?'　≈ <b>NT$'+fmtT(w0)+'</b> 每份':'')+'　<span class="badge" style="background:var(--sun)">選好數量才計入</span>';
+  }else if(ep>0){
     const w=twdOf(sub*f,'cash');
     line+=fmtL(ep)+' '+c+(q!==1?' × '+q+' ＝ '+fmtL(sub)+' '+c:'');
     if(w!==null){line+='　≈ <b>NT$'+fmtT(w)+'</b>'+(q!==1?'（每件 NT$'+fmtT(twdOf(ep*f,'cash'))+'）':'');
@@ -420,7 +423,7 @@ function render(){
   const c=CUR();
   let h=aiCardHTML();
   h+='<div class="cv-row" style="margin:10px 0"><button class="chip sm'+(S.k?' on':'')+'" data-act="k" aria-pressed="'+S.k+'">價格省略三個零（12 ＝ 12,000）</button><label class="fine">人數 <input id="people" inputmode="numeric" value="'+S.people+'" style="width:3.5em"></label><label class="fine">稅／服務費／小費 <input id="extra" inputmode="decimal" value="'+esc(S.extra)+'" placeholder="0" style="width:4em"> %</label></div>';
-  h+='<p class="fine" style="margin:-4px 0 8px">價格省略三個零常見於韓國、越南、印尼的菜單。</p>';
+  h+='<p class="fine" style="margin:-4px 0 8px">價格省略三個零常見於韓國、越南、印尼的菜單。數量預設 0，選好數量的品項才會計入合計與給店員看的清單。</p>';
   h+='<div id="rows">';
   S.rows.forEach((r,i)=>{
     h+='<div class="rowc'+(r.u?' u':'')+'"><div class="rc1"><input data-f="n" data-i="'+i+'" value="'+esc(r.n)+'" placeholder="品名（中文或備註）" aria-label="品名"><button class="btn" data-act="del" data-i="'+i+'" aria-label="刪除這一列">刪除</button></div>'
@@ -510,7 +513,7 @@ function aiApply(items){
     r.n=it.zh||'';
     r.orig=it.orig||'';
     r.p=has?String(S.k?Math.round(pk/1000*1000)/1000:Math.round(pk*100)/100):'';
-    r.q='1';
+    r.q='0';
     const bits=[];
     if(it.desc)bits.push(String(it.desc));
     if(it.price_printed&&String(it.price_printed).trim())bits.push('原寫：'+it.price_printed);
