@@ -1275,14 +1275,14 @@ function drawBudget(){
 }
 
 /* ================= snap (menu / product) ================= */
-const snapRow=()=>({n:'',ko:'',p:'',q:'1',ml:'',tw:'',d:'',u:false});
+const snapRow=()=>({n:'',ko:'',p:'',q:'0',ml:'',tw:'',d:'',u:false});
 const SNAP=Object.assign({mode:'menu',k:true,people:3,rows:[snapRow()]},store.get('busan-snap',{}));
 if(!Array.isArray(SNAP.rows)||!SNAP.rows.length)SNAP.rows=[snapRow()];
 function saveSnap(){store.set('busan-snap',SNAP);}
 function effPrice(r){const p=parseFloat(String(r.p).replace(/,/g,''));if(!(p>=0))return 0;return SNAP.k?p*1000:p;}
 function qtyOpts(cur){
-  const c=String(cur||'1');const vals=[];for(let n=1;n<=20;n++)vals.push(String(n));
-  if(vals.indexOf(c)<0&&c!=='')vals.push(c);
+  const c=(cur===undefined||cur===null||cur==='')?'0':String(cur);const vals=[];for(let n=0;n<=20;n++)vals.push(String(n));
+  if(vals.indexOf(c)<0)vals.push(c);
   return vals.map(v=>'<option value="'+esc(v)+'"'+(v===c?' selected':'')+'>'+esc(v)+'</option>').join('');
 }
 function snapAdd(){SNAP.rows.push(snapRow());saveSnap();renderSnap();const l=$$('#snap-rows [data-sf="n"]');if(l.length){try{l[l.length-1].focus();}catch(e){}}}
@@ -1301,7 +1301,10 @@ function cmpText(label,krTwd,tw,q){
 function rowCalc(r){
   const ep=effPrice(r),q=Math.max(0,parseFloat(r.q)||0),sub=ep*q;
   let line=r.u?'<span class="badge" style="background:var(--maple);color:#fff">請對照原圖確認</span>　':'';
-  if(ep>0){
+  if(ep>0&&q===0){
+    const w0=twdOf(ep,'wow');
+    line+='₩'+fmt(ep)+'　≈ <b>NT$'+fmtT(w0)+'</b> 每份　<span class="badge" style="background:var(--sun)">選好數量才計入</span>';
+  }else if(ep>0){
     line+='₩'+fmt(ep)+(q!==1?' × '+q+' ＝ ₩'+fmt(sub):'');
     line+='　≈ <b>NT$'+fmtT(twdOf(sub,'wow'))+'</b>'+(q!==1?'（每件 NT$'+fmtT(twdOf(ep,'wow'))+'）':'');
     if(cardOn())line+='　刷卡約 NT$'+fmtT(twdOf(sub,'card'));
@@ -1365,7 +1368,7 @@ function renderSnap(){
   let h='<div class="seg" style="margin-bottom:8px"><button class="chip sm'+(!prod?' on':'')+'" data-act="snapmode" data-v="menu">菜單</button><button class="chip sm'+(prod?' on':'')+'" data-act="snapmode" data-v="product">商品（Olive Young 等）</button></div>';
   h+=aiCardHTML(prod);
   h+='<div class="cv-row" style="margin:10px 0"><button class="chip sm'+(SNAP.k?' on':'')+'" data-act="snapk" aria-pressed="'+SNAP.k+'">價格省略三個零（12 ＝ ₩12,000）</button><label class="fine">人數 <input id="snap-people" inputmode="numeric" value="'+SNAP.people+'" style="width:3.5em"></label></div>';
-  h+='<div id="snap-rows">';
+  h+='<p class="fine" style="margin:-2px 0 8px">數量預設 0，選好數量的品項才會計入合計與給店員看的清單。</p><div id="snap-rows">';
   SNAP.rows.forEach((r,i)=>{
     h+='<div class="rowc'+(r.u?' u':'')+'"><div class="rc1"><input data-sf="n" data-i="'+i+'" value="'+esc(r.n)+'" placeholder="品名（中文或備註）" aria-label="品名"><button class="btn" data-act="snapdel" data-i="'+i+'" aria-label="刪除這一列">刪除</button></div>'
      +'<div class="rc2"><input data-sf="ko" data-i="'+i+'" class="kr" value="'+esc(r.ko)+'" placeholder="韓文名（選填）" aria-label="韓文名">'
@@ -1481,7 +1484,7 @@ function aiApply(items){
     else{r.n=it.zh||'';}
     r.ko=it.ko||'';
     r.p=has?(SNAP.k?String(Math.round(pk)/1000):String(Math.round(pk))):'';
-    r.q='1';
+    r.q='0';
     const bits=[];
     if(it.desc)bits.push(String(it.desc));
     if(prod&&it.promo)bits.push('促銷：'+it.promo);
