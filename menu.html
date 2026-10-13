@@ -128,6 +128,10 @@ textarea#ai-paste{width:100%;font:500 13px var(--tc);color:var(--ink);padding:8p
 .fab:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
 .set-sec{margin:0 0 14px;padding:12px 16px}
 .top{background:#fff}
+.hrow{display:block;width:100%;text-align:left;margin:0 0 10px;padding:10px 14px;border:3px solid var(--ink);border-radius:16px;background:#fff;box-shadow:var(--shadow);font:600 14px var(--tc);color:var(--ink);cursor:pointer}
+.hrow .h1{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.hrow:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.tbl tr.dim td{opacity:.45}
 
 </style>
 </head>
@@ -178,6 +182,7 @@ textarea#ai-paste{width:100%;font:500 13px var(--tc);color:var(--ink);padding:8p
   </section>
 </div></div>
 
+<div class="sheet" id="hist" role="dialog" aria-modal="true" aria-label="歷史紀錄"><div class="sheet-in" id="hist-body"></div></div>
 <div class="sheet" id="order" role="dialog" aria-modal="true" aria-label="給店員看的清單"><div class="sheet-in">
   <div class="sheet-h"><h2>給店員看</h2><button class="btn" data-act="closeorder">關閉</button></div>
   <div class="ol-say" id="order-say"></div>
@@ -248,7 +253,7 @@ const ZERO_DEC=['JPY','KRW','VND','IDR','CLP','HUF','ISK','PYG','UGX'];
 
 /* ================= state ================= */
 const row0=()=>({n:'',orig:'',p:'',q:'0',d:'',u:false});
-const S=Object.assign({place:'JP',custom:'',lang:'ja',langAuto:true,k:false,people:2,extra:'',rows:[row0()]},store.get('tmx-state',{}));
+const S=Object.assign({place:'JP',custom:'',lang:'ja',langAuto:true,k:false,people:2,extra:'',shop:'',rows:[row0()]},store.get('tmx-state',{}));
 if(!Array.isArray(S.rows)||!S.rows.length)S.rows=[row0()];
 if(!PLACES.some(p=>p.id===S.place))S.place='JP';
 function save(){store.set('tmx-state',S);}
@@ -421,7 +426,8 @@ function totals(){
 function render(){
   const root=$('#main');if(!root)return;
   const c=CUR();
-  let h=aiCardHTML();
+  let h='<div class="cv-row" style="margin:0 0 6px"><input id="shop" value="'+esc(S.shop||'')+'" placeholder="店名或備註（選填，方便在歷史紀錄找到）" style="flex:1;min-width:12em" aria-label="店名或備註"><button class="btn" data-act="hist">歷史紀錄'+(HIST.length?'（'+HIST.length+'）':'')+'</button></div>';
+  h+=aiCardHTML();
   h+='<div class="cv-row" style="margin:10px 0"><button class="chip sm'+(S.k?' on':'')+'" data-act="k" aria-pressed="'+S.k+'">價格省略三個零（12 ＝ 12,000）</button><label class="fine">人數 <input id="people" inputmode="numeric" value="'+S.people+'" style="width:3.5em"></label><label class="fine">稅／服務費／小費 <input id="extra" inputmode="decimal" value="'+esc(S.extra)+'" placeholder="0" style="width:4em"> %</label></div>';
   h+='<p class="fine" style="margin:-4px 0 8px">價格省略三個零常見於韓國、越南、印尼的菜單。數量預設 0，選好數量的品項才會計入合計與給店員看的清單。</p>';
   h+='<div id="rows">';
@@ -639,6 +645,79 @@ function speakOrder(){
 let ldUrl='';
 function openExternal(url){let w=null;try{w=window.open(url,'_blank');}catch(e){}if(w){try{w.opener=null;}catch(e){}return;}ldUrl=url;$('#ld-url').textContent=url;$('#ld-link').href=url;$('#ld').classList.add('open');}
 
+
+/* ================= history ================= */
+let HIST=store.get('tmx-history',[]);if(!Array.isArray(HIST))HIST=[];
+const HV={id:null,confirm:null};
+function saveHist(){store.set('tmx-history',HIST);}
+const rowHas=r=>!!(String(r.n||'').trim()||String(r.orig||'').trim()||String(r.p||'').trim());
+function hasContent(){return S.rows.some(rowHas);}
+function placeNameOf(rec){const p=PLACES.find(x=>x.id===rec.place);return rec.place==='OTHER'?(rec.cur||'其他國家'):(p?p.name:rec.place);}
+function snapshotRecord(){
+  return {id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),ts:Date.now(),place:S.place,custom:S.custom,cur:CUR(),lang:S.lang,shop:String(S.shop||'').trim(),k:S.k,people:S.people,extra:S.extra,rate:rateOf('cash'),card:cardOn()?rateOf('card'):0,fee:feePct(),rows:JSON.parse(JSON.stringify(S.rows.filter(rowHas)))};
+}
+function archiveCurrent(){
+  if(!hasContent())return false;
+  const rec=snapshotRecord();const key=JSON.stringify(rec.rows)+'|'+rec.shop+'|'+rec.place;
+  const i=HIST.findIndex(h=>JSON.stringify(h.rows)+'|'+h.shop+'|'+h.place===key);
+  if(i>=0){const old=HIST.splice(i,1)[0];old.ts=rec.ts;HIST.unshift(old);}
+  else{HIST.unshift(rec);}
+  if(HIST.length>40)HIST.length=40;
+  saveHist();return true;
+}
+function fmtLc(n,cur){return (ZERO_DEC.indexOf(cur)>=0||Math.abs(n-Math.round(n))<0.005)?fmt(n):(Math.round(n*100)/100).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function dateStr(ts){const d=new Date(ts);const z=x=>(x<10?'0':'')+x;return (d.getMonth()+1)+'/'+d.getDate()+' '+z(d.getHours())+':'+z(d.getMinutes());}
+function recEp(rec,r){const p=parseNum(r.p);if(!(p>=0))return 0;return rec.k?p*1000:p;}
+function recTotals(rec){
+  const f=1+num(rec.extra)/100;let tot=0,sel=0;
+  rec.rows.forEach(r=>{const q=Math.max(0,parseFloat(r.q)||0);if(q>0){sel++;tot+=recEp(rec,r)*q*f;}});
+  return {tot:tot,sel:sel,f:f,n:rec.rows.length,twd:rec.rate>0?tot/rec.rate:null};
+}
+function histListHTML(){
+  let h='<div class="sheet-h"><h2>歷史紀錄</h2><button class="btn" data-act="histclose">關閉</button></div>';
+  if(!HIST.length)return h+'<p class="fine">還沒有紀錄。每次重新打開頁面，上一份菜單會自動存到這裡，按「清空」時也會先存起來。</p>';
+  h+='<p class="fine">點一筆可以瀏覽內容，並復原到表格繼續編輯。最多保留最近 40 筆，存在這支手機的瀏覽器裡。</p>';
+  HIST.forEach(rec=>{
+    const t=recTotals(rec);
+    const names=rec.rows.slice(0,3).map(r=>r.n||r.orig).filter(Boolean).join('、')+(rec.rows.length>3?'…':'');
+    h+='<button class="hrow" data-act="histopen" data-id="'+esc(rec.id)+'"><div class="h1"><b>'+esc(rec.shop||'（未命名菜單）')+'</b><span class="fine">'+dateStr(rec.ts)+'</span></div>'
+      +'<div class="fine">'+esc(placeNameOf(rec))+'｜'+esc(rec.cur||'')+'・共 '+t.n+' 項，已選 '+t.sel+' 項'+(t.sel?'・合計 '+fmtLc(t.tot,rec.cur)+' '+esc(rec.cur)+(t.twd!==null?'（約 NT$'+fmtT(t.twd)+'）':''):'')+'</div>'
+      +'<div class="fine">'+esc(names)+'</div></button>';
+  });
+  h+='<div class="actions"><button class="btn" data-act="histclear">'+(HV.confirm==='all'?'再按一次，確定全部刪除':'清除全部歷史')+'</button></div>';
+  return h;
+}
+function histDetailHTML(rec){
+  const t=recTotals(rec),c=rec.cur||'';
+  let h='<div class="sheet-h"><button class="btn" data-act="histback">← 返回</button><button class="btn" data-act="histclose">關閉</button></div>';
+  h+='<h3>'+esc(rec.shop||'（未命名菜單）')+'</h3><p class="fine">'+dateStr(rec.ts)+'・'+esc(placeNameOf(rec))+'｜'+esc(c)+(rec.rate>0?'・當時匯率 1 台幣 ＝ '+fmtR(rec.rate)+' '+esc(c):'')+(t.f!==1?'・含 '+num(rec.extra)+'% 稅／服務費／小費':'')+'</p>';
+  h+='<div class="receipt"><div class="tbl"><table><tr><th>品項</th><th class="num">數量</th><th class="num">單價</th><th class="num">NT$</th></tr>';
+  rec.rows.forEach(r=>{
+    const q=Math.max(0,parseFloat(r.q)||0),ep=recEp(rec,r);
+    h+='<tr class="'+(q>0?'':'dim')+'"><td>'+esc(r.n||r.orig||'（未命名）')+(r.n&&r.orig?'<div class="fine">'+esc(r.orig)+'</div>':'')+'</td><td class="num">'+(q>0?q:'未點')+'</td><td class="num">'+(ep>0?fmtLc(ep,c):'—')+'</td><td class="num">'+(q>0&&ep>0&&rec.rate>0?fmtT(ep*q*t.f/rec.rate):'—')+'</td></tr>';
+  });
+  h+='<tr><th>合計</th><th class="num">'+t.sel+' 項</th><th class="num">'+fmtLc(t.tot,c)+'</th><th class="num">'+(t.twd!==null?fmtT(t.twd):'—')+'</th></tr></table></div></div>';
+  h+='<p class="fine">灰色的是數量為 0 沒點的品項。台幣用存檔當時的匯率計算。</p>';
+  h+='<div class="actions"><button class="btn btn-main" data-act="histrestore" data-id="'+esc(rec.id)+'">復原到表格</button><button class="btn" data-act="histdel" data-id="'+esc(rec.id)+'">'+(HV.confirm===rec.id?'再按一次，確定刪除':'刪除這筆')+'</button></div>';
+  return h;
+}
+function renderHist(){
+  const b=$('#hist-body');if(!b)return;
+  const rec=HV.id?HIST.find(x=>x.id===HV.id):null;
+  b.innerHTML=rec?histDetailHTML(rec):histListHTML();
+}
+function openHist(){HV.id=null;HV.confirm=null;renderHist();const e=$('#hist');if(e){e.classList.add('open');document.body.style.overflow='hidden';}}
+function closeHist(){const e=$('#hist');if(e){e.classList.remove('open');document.body.style.overflow='';}}
+function restoreHist(id){
+  const rec=HIST.find(x=>x.id===id);if(!rec)return;
+  archiveCurrent();
+  S.place=PLACES.some(p=>p.id===rec.place)?rec.place:S.place;S.custom=rec.custom||'';if(rec.lang&&LANGS[rec.lang]){S.lang=rec.lang;S.langAuto=false;}
+  S.k=!!rec.k;S.people=rec.people||S.people;S.extra=rec.extra||'';S.shop=rec.shop||'';
+  S.rows=JSON.parse(JSON.stringify(rec.rows));if(!S.rows.length)S.rows=[row0()];
+  save();initDest();refreshRateUI();render();closeHist();toast('已復原到表格，可以繼續編輯');
+}
+function newSession(){archiveCurrent();S.rows=[row0()];S.shop='';save();}
+
 /* ================= events ================= */
 function rowInput(el){const i=+el.dataset.i;if(!S.rows[i])return;S.rows[i][el.dataset.f]=el.value;save();totals();}
 document.addEventListener('click',e=>{
@@ -647,12 +726,19 @@ document.addEventListener('click',e=>{
   const ext=e.target.closest('a[href^="http"]');
   if(ext&&!ext.closest('#ld')){e.preventDefault();openExternal(ext.href);return;}
   const b=e.target.closest('[data-act]');
-  if(!b){if(e.target.id==='settings')closeSettings();if(e.target.id==='order')closeOrder();if(e.target.id==='ld')$('#ld').classList.remove('open');return;}
+  if(!b){if(e.target.id==='hist')closeHist();if(e.target.id==='settings')closeSettings();if(e.target.id==='order')closeOrder();if(e.target.id==='ld')$('#ld').classList.remove('open');return;}
   const a=b.dataset.act;
   if(a==='k'){S.k=!S.k;save();render();}
   else if(a==='add'){S.rows.push(row0());save();render();}
   else if(a==='del'){S.rows.splice(+b.dataset.i,1);if(!S.rows.length)S.rows.push(row0());save();render();}
-  else if(a==='clear'){S.rows=[row0()];save();render();toast('已清空');}
+  else if(a==='clear'){const had=hasContent();newSession();render();toast(had?'已存到歷史紀錄並清空':'已清空');}
+  else if(a==='hist')openHist();
+  else if(a==='histclose')closeHist();
+  else if(a==='histback'){HV.id=null;HV.confirm=null;renderHist();}
+  else if(a==='histopen'){HV.id=b.dataset.id;HV.confirm=null;renderHist();}
+  else if(a==='histrestore')restoreHist(b.dataset.id);
+  else if(a==='histdel'){if(HV.confirm===b.dataset.id){HIST=HIST.filter(x=>x.id!==b.dataset.id);saveHist();HV.id=null;HV.confirm=null;renderHist();render();toast('已刪除');}else{HV.confirm=b.dataset.id;renderHist();}}
+  else if(a==='histclear'){if(HV.confirm==='all'){HIST=[];saveHist();HV.confirm=null;renderHist();render();toast('已清除全部歷史');}else{HV.confirm='all';renderHist();}}
   else if(a==='order')showOrder();
   else if(a==='settings')openSettings();
   else if(a==='closesettings')closeSettings();
@@ -675,6 +761,7 @@ document.addEventListener('input',e=>{
   const t=e.target;
   if(t.dataset&&t.dataset.f){rowInput(t);return;}
   if(t.id==='ai-paste'){AI.paste=t.value;return;}
+  if(t.id==='shop'){S.shop=t.value;save();return;}
   if(t.id==='people'){S.people=Math.max(1,parseInt(t.value)||1);save();totals();return;}
   if(t.id==='extra'){S.extra=t.value;save();totals();return;}
   if(t.id==='r-cash'||t.id==='r-card'||t.id==='r-fee'){const m=myRates();m.cash=$('#r-cash').value;m.card=$('#r-card').value;m.fee=$('#r-fee').value;store.set('tmx-rates',RATES);const st=$('#rate-status');if(st)st.innerHTML=rateStatusHTML();totals();return;}
@@ -687,10 +774,11 @@ document.addEventListener('change',e=>{
   if(t.id==='dest'){S.place=t.value;const p=place();if(p.lang&&LANGS[p.lang]){S.lang=p.lang;S.langAuto=true;}save();initDest();refreshRateUI();render();return;}
   if(t.id==='lang'){S.lang=t.value;S.langAuto=false;save();refreshDestUI();return;}
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSettings();closeOrder();$('#ld').classList.remove('open');}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeHist();closeSettings();closeOrder();$('#ld').classList.remove('open');}});
 
 /* ================= boot ================= */
 const hashUsed=readHash();const firstRun=!hashUsed&&store.get('tmx-state',null)===null;
+newSession();
 initDest();refreshRateUI();render();aiInit();
 if(firstRun)openSettings();
 if(!window.claude){fetchLiveRate().then(ok=>{if(ok){refreshRateUI();totals();}});}
