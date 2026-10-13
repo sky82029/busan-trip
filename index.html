@@ -259,6 +259,10 @@ h3{margin:0 0 6px;font-size:17px;font-weight:800}
 .cmp{margin:6px 0 2px;font-size:13px;line-height:1.7}
 textarea#ai-paste{width:100%;font:500 13px var(--tc);color:var(--ink);padding:8px 10px;border:2.5px solid var(--ink);border-radius:12px;background:var(--sky-2);margin-top:8px}
 .steps{margin:6px 0 0;padding-left:1.2em;font-size:14px}.steps li{margin:.3em 0}
+.hrow{display:block;width:100%;text-align:left;margin:0 0 10px;padding:10px 14px;border:3px solid var(--ink);border-radius:16px;background:#fff;box-shadow:var(--shadow);font:600 14px var(--tc);color:var(--ink);cursor:pointer}
+.hrow .h1{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.hrow:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.tbl tr.dim td{opacity:.45}
 
 </style>
 </head>
@@ -480,6 +484,7 @@ textarea#ai-paste{width:100%;font:500 13px var(--tc);color:var(--ink);padding:8p
       </ul>
     </div>
 </div></div>
+<div class="sheet" id="hist" role="dialog" aria-modal="true" aria-label="歷史紀錄"><div class="sheet-in" id="hist-body"></div></div>
 <div class="sheet" id="order" role="dialog" aria-modal="true" aria-label="給店員看的點餐清單"><div class="sheet-in">
   <div class="sheet-h"><h2>給店員看</h2><button class="btn" data-act="closesheet" data-id="order">關閉</button></div>
   <div class="ol-say">이거 주세요.</div>
@@ -1166,7 +1171,13 @@ document.addEventListener('click',e=>{
     else if(a==='snapdel'){snapDel(+b.dataset.i);}
     else if(a==='snapmode'){SNAP.mode=b.dataset.v;saveSnap();renderSnap();}
     else if(a==='snapk'){SNAP.k=!SNAP.k;saveSnap();renderSnap();}
-    else if(a==='snapclear'){SNAP.rows=[snapRow()];saveSnap();renderSnap();toast('已清空');}
+    else if(a==='snapclear'){const had=shHas();shNewSession();renderSnap();toast(had?'已存到歷史紀錄並清空':'已清空');}
+    else if(a==='hist')shOpen();
+    else if(a==='shopen'){SHV.id=b.dataset.id;SHV.confirm=null;shRender();}
+    else if(a==='shback'){SHV.id=null;SHV.confirm=null;shRender();}
+    else if(a==='shrestore')shRestore(b.dataset.id);
+    else if(a==='shdel'){if(SHV.confirm===b.dataset.id){SH=SH.filter(x=>x.id!==b.dataset.id);saveSH();SHV.id=null;SHV.confirm=null;shRender();if(state.tool==='snap')renderSnap();toast('已刪除');}else{SHV.confirm=b.dataset.id;shRender();}}
+    else if(a==='shclear'){if(SHV.confirm==='all'){SH=[];saveSH();SHV.confirm=null;shRender();if(state.tool==='snap')renderSnap();toast('已清除全部歷史');}else{SHV.confirm='all';shRender();}}
     else if(a==='prompt'){doCopy(buildPrompt(b.dataset.v),b);}
     else if(a==='order')showOrder();
     else if(a==='bagadd'){BAG.rows.push({n:'',kg:''});saveBag();renderBag();}
@@ -1189,6 +1200,7 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('input',e=>{
   if(e.target.id==='q'){state.q=e.target.value;state._refocus=true;renderPlan();}
+  if(e.target.id==='shop'){SNAP.shop=e.target.value;saveSnap();}
   if(e.target.id==='ai-paste'){AI.paste=e.target.value;}
   if(e.target.id==='r-wow'||e.target.id==='r-card'||e.target.id==='r-fee'){saveRates();refreshMoney();}
   if(e.target.dataset&&e.target.dataset.sf){snapInput(e.target);}
@@ -1276,7 +1288,7 @@ function drawBudget(){
 
 /* ================= snap (menu / product) ================= */
 const snapRow=()=>({n:'',ko:'',p:'',q:'0',ml:'',tw:'',d:'',u:false});
-const SNAP=Object.assign({mode:'menu',k:true,people:3,rows:[snapRow()]},store.get('busan-snap',{}));
+const SNAP=Object.assign({mode:'menu',k:true,people:3,shop:'',rows:[snapRow()]},store.get('busan-snap',{}));
 if(!Array.isArray(SNAP.rows)||!SNAP.rows.length)SNAP.rows=[snapRow()];
 function saveSnap(){store.set('busan-snap',SNAP);}
 function effPrice(r){const p=parseFloat(String(r.p).replace(/,/g,''));if(!(p>=0))return 0;return SNAP.k?p*1000:p;}
@@ -1366,6 +1378,7 @@ function renderSnap(){
   const root=$('#snap-root');if(!root)return;
   const prod=SNAP.mode==='product';
   let h='<div class="seg" style="margin-bottom:8px"><button class="chip sm'+(!prod?' on':'')+'" data-act="snapmode" data-v="menu">菜單</button><button class="chip sm'+(prod?' on':'')+'" data-act="snapmode" data-v="product">商品（Olive Young 等）</button></div>';
+  h+='<div class="cv-row" style="margin:0 0 6px"><input id="shop" value="'+esc(SNAP.shop||'')+'" placeholder="店名或備註（選填，方便在歷史紀錄找到）" style="flex:1;min-width:12em;font:600 15px var(--tc);padding:8px 12px;border:3px solid var(--ink);border-radius:999px;background:#fff;color:var(--ink)" aria-label="店名或備註"><button class="btn" data-act="hist">歷史紀錄'+(SH.length?'（'+SH.length+'）':'')+'</button></div>';
   h+=aiCardHTML(prod);
   h+='<div class="cv-row" style="margin:10px 0"><button class="chip sm'+(SNAP.k?' on':'')+'" data-act="snapk" aria-pressed="'+SNAP.k+'">價格省略三個零（12 ＝ ₩12,000）</button><label class="fine">人數 <input id="snap-people" inputmode="numeric" value="'+SNAP.people+'" style="width:3.5em"></label></div>';
   h+='<p class="fine" style="margin:-2px 0 8px">數量預設 0，選好數量的品項才會計入合計與給店員看的清單。</p><div id="snap-rows">';
@@ -1393,6 +1406,64 @@ function showOrder(){
   box.innerHTML=lines.length?lines.map(x=>'<div class="ol">'+esc(x)+'</div>').join(''):'<p class="fine">還沒有品項。請先在「拍照翻譯」填入韓文名與數量。</p>';
   openSheet('order');
 }
+
+
+/* ================= history ================= */
+let SH=store.get('busan-snap-hist',[]);if(!Array.isArray(SH))SH=[];
+const SHV={id:null,confirm:null};
+function saveSH(){store.set('busan-snap-hist',SH);}
+const srowHas=r=>!!(String(r.n||'').trim()||String(r.ko||'').trim()||String(r.p||'').trim());
+function shHas(){return SNAP.rows.some(srowHas);}
+function shSnapshot(){return {id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),ts:Date.now(),mode:SNAP.mode,k:SNAP.k,people:SNAP.people,shop:String(SNAP.shop||'').trim(),rate:rateOf('wow'),rows:JSON.parse(JSON.stringify(SNAP.rows.filter(srowHas)))};}
+function shArchive(){
+  if(!shHas())return false;
+  const rec=shSnapshot();const key=JSON.stringify(rec.rows)+'|'+rec.shop;
+  const i=SH.findIndex(h=>JSON.stringify(h.rows)+'|'+h.shop===key);
+  if(i>=0){const old=SH.splice(i,1)[0];old.ts=rec.ts;SH.unshift(old);}else SH.unshift(rec);
+  if(SH.length>40)SH.length=40;
+  saveSH();return true;
+}
+function shDate(ts){const d=new Date(ts);const z=x=>(x<10?'0':'')+x;return (d.getMonth()+1)+'/'+d.getDate()+' '+z(d.getHours())+':'+z(d.getMinutes());}
+function shEp(rec,r){const p=parseFloat(String(r.p).replace(/,/g,''));if(!(p>=0))return 0;return rec.k?p*1000:p;}
+function shTotals(rec){let tot=0,sel=0;rec.rows.forEach(r=>{const q=Math.max(0,parseFloat(r.q)||0);if(q>0){sel++;tot+=shEp(rec,r)*q;}});return {tot:tot,sel:sel,n:rec.rows.length,twd:rec.rate>0?tot/rec.rate:null};}
+function shListHTML(){
+  let h='<div class="sheet-h"><h2>歷史紀錄</h2><button class="btn" data-act="closesheet" data-id="hist">關閉</button></div>';
+  if(!SH.length)return h+'<p class="fine">還沒有紀錄。每次重新打開頁面，上一份菜單會自動存到這裡，按「清空」時也會先存起來。</p>';
+  h+='<p class="fine">點一筆可以瀏覽內容，並復原到表格繼續編輯。最多保留最近 40 筆，存在這支手機的瀏覽器裡。</p>';
+  SH.forEach(rec=>{
+    const t=shTotals(rec);
+    const names=rec.rows.slice(0,3).map(r=>r.n||r.ko).filter(Boolean).join('、')+(rec.rows.length>3?'…':'');
+    h+='<button class="hrow" data-act="shopen" data-id="'+esc(rec.id)+'"><div class="h1"><b>'+esc(rec.shop||'（未命名）')+'</b><span class="fine">'+shDate(rec.ts)+'</span></div>'
+      +'<div class="fine">共 '+t.n+' 項，已選 '+t.sel+' 項'+(t.sel?'・合計 ₩'+fmt(t.tot)+(t.twd!==null?'（約 NT$'+fmtT(t.twd)+'）':''):'')+'</div><div class="fine">'+esc(names)+'</div></button>';
+  });
+  h+='<div class="actions"><button class="btn" data-act="shclear">'+(SHV.confirm==='all'?'再按一次，確定全部刪除':'清除全部歷史')+'</button></div>';
+  return h;
+}
+function shDetailHTML(rec){
+  const t=shTotals(rec);
+  let h='<div class="sheet-h"><button class="btn" data-act="shback">← 返回</button><button class="btn" data-act="closesheet" data-id="hist">關閉</button></div>';
+  h+='<h3>'+esc(rec.shop||'（未命名）')+'</h3><p class="fine">'+shDate(rec.ts)+(rec.rate>0?'・當時匯率 1 台幣 ＝ '+fmtR2(rec.rate)+' 韓元':'')+'</p>';
+  h+='<div class="tbl"><table><tr><th>品項</th><th class="num">數量</th><th class="num">單價 ₩</th><th class="num">NT$</th></tr>';
+  rec.rows.forEach(r=>{
+    const q=Math.max(0,parseFloat(r.q)||0),ep=shEp(rec,r);
+    h+='<tr class="'+(q>0?'':'dim')+'"><td>'+esc(r.n||r.ko||'（未命名）')+(r.n&&r.ko?'<div class="fine">'+esc(r.ko)+'</div>':'')+'</td><td class="num">'+(q>0?q:'未點')+'</td><td class="num">'+(ep>0?fmt(ep):'—')+'</td><td class="num">'+(q>0&&ep>0&&rec.rate>0?fmtT(ep*q/rec.rate):'—')+'</td></tr>';
+  });
+  h+='<tr><th>合計</th><th class="num">'+t.sel+' 項</th><th class="num">'+fmt(t.tot)+'</th><th class="num">'+(t.twd!==null?fmtT(t.twd):'—')+'</th></tr></table></div>';
+  h+='<p class="fine">灰色的是數量為 0 沒點的品項。台幣用存檔當時的匯率計算。</p>';
+  h+='<div class="actions"><button class="btn btn-main" data-act="shrestore" data-id="'+esc(rec.id)+'">復原到表格</button><button class="btn" data-act="shdel" data-id="'+esc(rec.id)+'">'+(SHV.confirm===rec.id?'再按一次，確定刪除':'刪除這筆')+'</button></div>';
+  return h;
+}
+const fmtR2=v=>v>=100?v.toFixed(1):v>=1?v.toFixed(2):v.toFixed(4);
+function shRender(){const b=$('#hist-body');if(!b)return;const rec=SHV.id?SH.find(x=>x.id===SHV.id):null;b.innerHTML=rec?shDetailHTML(rec):shListHTML();}
+function shOpen(){SHV.id=null;SHV.confirm=null;shRender();openSheet('hist');}
+function shRestore(id){
+  const rec=SH.find(x=>x.id===id);if(!rec)return;
+  shArchive();
+  SNAP.mode=rec.mode||'menu';SNAP.k=!!rec.k;SNAP.people=rec.people||SNAP.people;SNAP.shop=rec.shop||'';
+  SNAP.rows=JSON.parse(JSON.stringify(rec.rows));if(!SNAP.rows.length)SNAP.rows=[snapRow()];
+  saveSnap();renderSnap();closeSheet('hist');toast('已復原到表格，可以繼續編輯');
+}
+function shNewSession(){shArchive();SNAP.rows=[snapRow()];SNAP.shop='';saveSnap();}
 
 /* ================= baggage ================= */
 const BAG=Object.assign({allow:'',rows:[{n:'',kg:''}]},store.get('busan-bag',{}));
@@ -1579,6 +1650,7 @@ function aiCardHTML(prod){
   h+='<div class="fine" id="ai-status" style="margin-top:6px">'+esc(AI.msg)+'</div></div>'+manual+backupHTML();
   return h;
 }
+shNewSession();
 initRates();drawBudget();aiInit();
 if(!window.claude){fetchLiveRate().then(ok=>{if(ok)refreshMoney();});}
 
